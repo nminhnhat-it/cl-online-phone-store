@@ -7,11 +7,7 @@ const config = {
   },
   auth: {
     key: process.env.ACCESS_TOKEN_SECRET || "Ocd000000@",
-    expire: 60 * 60, // expire in 15 min
-    role: {
-      ad: 0,
-      us: 1,
-    }
+    expire: 60 * 60, // expire in 60 min
   }
 };
 

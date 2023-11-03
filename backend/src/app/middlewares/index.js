@@ -4,7 +4,7 @@ const apiError = require("../utils/error.utils")
 const jwt = require("jsonwebtoken");
 
 // require models
-const userModel = require("../models/user.model");
+const staffModel = require("../models/staff.model");
 
 module.exports = {
 
@@ -17,7 +17,7 @@ module.exports = {
   generateToken: (req, res, next) => {
     var payload = res.payload
     var token = jwt.sign({
-      _id: payload._id
+      id: payload.id,
     }, config.auth.key, {
       expiresIn: config.auth.expire
     });
@@ -33,8 +33,7 @@ module.exports = {
       var data = jwt.verify(token, config.auth.key);
       if (data) {
         res.payload = {
-          _id: data._id,
-          role: data.role
+          id: data.id,
         }
         return next();
       }
@@ -44,14 +43,12 @@ module.exports = {
     next();
   },
 
-   verifyPermission:async (req, res, next) => {
+  verifyPermission: async (req, res, next) => {
     try {
-      var userData = await userModel.findById(res.payload._id);
-      var role = userData.role;
-  
-      if(role != config.auth.role.ad)
+      var staff = await staffModel.findById(res.payload.id);
+      if (staff)
         return next();
-      return next(new apiError(403,"Access forbidden"));
+      return next(new apiError(403, "Access forbidden"));
     } catch (error) {
       return next(error);
     }
