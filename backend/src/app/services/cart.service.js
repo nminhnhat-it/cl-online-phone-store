@@ -1,206 +1,172 @@
 const utils = require("../utils")
 const apiError = require("../utils/error.utils")
 const productVersionModel = require("../models/productVersion.model");
+const cartModel = require("../models/cart.model");
+const cartInfoModel = require("../models/cartInfo.model");
 
 class CartService {
 
   async getAll() {
-    var productsArray = await productModel.find();
+    var carts = await cartModel.find();
 
-    var products = [];
-    for (var product of productsArray) {
-      var payload = {
-        slug: product.pd_slug
-      };
+    var cartArr = []
+    for (var cart of carts) {
+      var cartInfos = await cartInfoModel.find({
+        c_id: cart._id
+      })
 
-      product = await this.get(payload);
-      products.push(product);
+      cart = {
+        ...cart._doc,
+        cartInfos: cartInfos
+      }
+      cartArr.push(cart);
     }
 
-    return products;
+    return cartArr;
   }
 
   async get(payload) {
-    var slug = payload.slug;
-    var product = await productModel.findOne({
-      pd_slug: slug,
-    });
+    var cart = await cartModel.findById(payload.id);
+    if (cart) {
+      var cartInfos = await cartInfoModel.find({
+        c_id: cart._id,
+      });
 
-    if (product) {
-      var productInfo = await productInfoModel.findById(product.pi_id);
-
-      var productVersions = await productVersionModel.find({
-        pd_id: product._id
-      })
-
-      var productImages = await productImageModel.find({
-        pd_id: product._id
-      })
-
-      product = {
-        ...product._doc,
-        productInfo: productInfo,
-        productVersions: productVersions,
-        productImages: productImages
+      cart = {
+        ...cart._doc,
+        cartInfos: cartInfos
       }
     }
-
-    return product;
+    return cart;
   }
 
   async create(payload) {
+    var cart = await cartModel.findOne({
+      c_isOrder: false,
+    })
+    var carts = await cartModel.find();
+    if (cart && carts)
+      return null;
 
-    var productInfo = new productInfoModel({
-      pi_screen: payload.productInfo.pi_screen,
-      pi_camera: payload.productInfo.pi_camera,
-      pi_batterry: payload.productInfo.pi_batterry,
-      pi_mem: payload.productInfo.pi_mem,
-      pi_ram: payload.productInfo.pi_ram,
-      pi_chipset: payload.productInfo.pi_chipset,
+    var cart = new cartModel({
+      us_id: payload.id,
     })
 
-    var product = new productModel({
-      pd_title: payload.pd_title,
-      pd_decs: payload.pd_decs,
-      pd_slug: utils.toSlug(payload.pd_title),
-      pi_id: productInfo._id,
-      sr_id: payload.sr_id
-    })
-    var error = product.validateSync();
-    if (error) return error;
-
-    var productImageArr = [];
-    var productImages = payload.productImages;
-    for (const image of productImages) {
-      var productImage = new productImageModel({
-        im_link: image.im_link,
-        pd_id: product._id,
-      })
-      var error = productImage.validateSync();
-      if (error) return error;
-      productImageArr.push(productImage);
-    }
-
-    var productVersionArr = []
-    var productVersions = payload.productVersions;
-    for (const version of productVersions) {
-      var productVersion = new productVersionModel({
-        pv_img: version.pv_img,
-        pv_title: version.pv_title,
-        pv_price: version.pv_price,
-        pv_quantity: version.pv_quantity,
-        pd_id: product._id
-      })
-      var error = productVersion.validateSync();
-      if (error) return error;
-      productVersionArr.push(productVersion);
-    }
-
-    for (const productImage of productImageArr) {
-      await productImage.save();
-    }
-    for (const productVersion of productVersionArr) {
-      await productVersion.save();
-      if (product.pd_minPrice > productVersion.pv_price || product.pd_minPrice == 0)
-        product.pd_minPrice = productVersion.pv_price;
-    }
-    await product.save();
-    await productInfo.save();
+    cart.save();
+    return cart;
   }
 
   async deleteAll() {
-    var result = await productInfoModel.deleteMany();
+    var result = await cartInfoModel.deleteMany();
     if (result)
-      var result = await productVersionModel.deleteMany();
-    if (result)
-      var result = await productModel.deleteMany();
+      var result = await cartModel.deleteMany();
     return result;
   }
 
   async delete(payload) {
-    var id = payload.id;
-    var product = await productModel.findById(id);
-
-    await productInfoModel.findByIdAndDelete(product.pi_id);
-    await productVersionModel.deleteMany({
-      pd_id: id
+    await cartInfoModel.deleteMany({
+      c_id: payload.id
     })
-    await productImageModel.deleteMany({
-      pd_id: id
-    })
-    var result = await productModel.findByIdAndDelete(id);
+    var result = await cartModel.findByIdAndDelete(payload.id);
     return result;
   }
 
   async update(payload) {
-    var product = await productModel.findById(payload.id);
-    product.pd_title = payload.pd_title;
-    product.pd_decs = payload.pd_decs;
-    product.pd_slug = utils.toSlug(payload.pd_title);
-    product.sr_id = payload.sr_id;
+    var cart = await cartModel.findById(payload.id);
+    cart.c_total = payload.c_total;
+    cart.c_reduce = payload.c_reduce;
+    cart.c_isOrder = payload.c_isOrder;
 
-    var error = product.validateSync();
-    if (error) return error;
+    cart.save();
+  }
 
-    var productInfo = await productInfoModel.findById(product.pi_id);
-    productInfo.pi_screen = payload.productInfo.pi_screen;
-    productInfo.pi_camera = payload.productInfo.pi_camera;
-    productInfo.pi_batterry = payload.productInfo.pi_batterry;
-    productInfo.pi_mem = payload.productInfo.pi_mem;
-    productInfo.pi_ram = payload.productInfo.pi_ram;
-    productInfo.pi_chipset = payload.productInfo.pi_chipset;
-
-    var delProductImages = await productImageModel.find({
-      pd_id: product._id
+  async getByUserid(payload) {
+    var cart = await cartModel.findOne({
+      us_id: payload.id,
+      c_isOrder: false
     })
-    var productImageArr = [];
-    var productImages = payload.productImages;
-    for (const image of productImages) {
-      var productImage = new productImageModel({
-        im_link: image.im_link,
-        pd_id: product._id,
-      })
-      var error = productImage.validateSync();
-      if (error) return error;
-      productImageArr.push(productImage);
-    }
 
-    var delProductVersions = await productVersionModel.find({
-      pd_id: product._id
+    if (cart) {
+      var cartInfos = await cartInfoModel.find({
+        c_id: cart._id,
+      });
+
+      cart = {
+        ...cart._doc,
+        cartInfos: cartInfos
+      }
+    }
+    return cart;
+  }
+
+  async deleteByUserId(payload) {
+    var cart = await cartModel.findOne({
+      us_id: payload.id,
+      c_isOrder: false
     })
-    var productVersionArr = []
-    var productVersions = payload.productVersions;
-    for (const version of productVersions) {
-      var productVersion = new productVersionModel({
-        pv_img: version.pv_img,
-        pv_title: version.pv_title,
-        pv_price: version.pv_price,
-        pv_quantity: version.pv_quantity,
-        pd_id: product._id
+
+    var cartInfo = await cartInfoModel.deleteMany({
+      c_id: cart._id
+    })
+
+    return cartInfo;
+  }
+
+  async addCartInfoByUserId(payload) {
+    var cart = await cartModel.findOne({
+      us_id: payload.id,
+      c_isOrder: false
+    })
+
+    if (cart) {
+      var productVersion = await productVersionModel.findById(payload.pv_id);
+      var ci_price = productVersion.pv_price * payload.ci_quantity;
+
+      var cartInfo = new cartInfoModel({
+        pv_id: payload.pv_id,
+        c_id: cart._id,
+        ci_quantity: payload.ci_quantity,
+        ci_price: ci_price,
+      });
+      await cartInfo.save();
+
+      cart.c_total += ci_price;
+      await cart.save();
+    }
+  }
+
+  async deleteCartInfoById(payload) {
+    var cartInfo = await cartInfoModel.findByIdAndDelete(payload.ci_id);
+    if (cartInfo) {
+      var cart = await cartModel.findOne({
+        us_id: payload.id,
+        c_isOrder: false
       })
-      var error = productVersion.validateSync();
-      if (error) return error;
-      productVersionArr.push(productVersion);
-    }
 
-    for (const productImage of productImageArr) {
-      await productImage.save();
+      cart.c_total -= cartInfo.ci_price;
+      await cart.save();
     }
-    for (const productImage of delProductImages) {
-      await productImageModel.findByIdAndDelete(productImage._id);
-    }
+    return cartInfo;
+  }
 
-    for (const productVersion of productVersionArr) {
-      await productVersion.save();
-      if (product.pd_minPrice > productVersion.pv_price || product.pd_minPrice == 0)
-        product.pd_minPrice = productVersion.pv_price;
-    }
-    for (const productVersion of delProductVersions) {
-      await productVersionModel.findByIdAndDelete(productVersion._id);
-    }
+  async updateCartInfoById(payload) {
+    var productVersion = await productVersionModel.findById(payload.pv_id);
+    var ci_price = productVersion.pv_price * payload.ci_quantity;
 
-    await product.save();
-    await productInfo.save();
+    var cartInfo = await cartInfoModel.findById(payload.ci_id);
+    var ci_pricebf = cartInfo.ci_price;
+    cartInfo.ci_quantity = payload.ci_quantity;
+    cartInfo.ci_price = ci_price;
+
+    cartInfo.save();
+
+    var cart = await cartModel.findOne({
+      us_id: payload.id,
+      c_isOrder: false
+    })
+
+    cart.c_total = cart.c_total - ci_pricebf + ci_price;
+    await cart.save();
   }
 }
 

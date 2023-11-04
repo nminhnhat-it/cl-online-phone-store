@@ -9,6 +9,7 @@ const brandRoutes = require("./brand.route");
 const serieRoutes = require("./serie.route");
 const productRoutes = require("./product.route");
 const cartRoutes = require("./cart.route");
+const orderRoutes = require("./order.route");
 
 // use routes
 router.use("/accounts", accountRoutes);
@@ -16,6 +17,7 @@ router.use("/brands", brandRoutes);
 router.use("/series", serieRoutes);
 router.use("/products", productRoutes);
 router.use("/carts", cartRoutes);
+router.use("/orders", orderRoutes);
 
 router.use((req, res, next) => {
   return next(new apiError(404, "Resource not found"));
