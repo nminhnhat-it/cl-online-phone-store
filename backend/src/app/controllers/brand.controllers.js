@@ -57,7 +57,7 @@ module.exports = {
       var result = await service.delete(payload);
       if (result)
         return res.send("Deleted brand");
-      return next(new apiError(404, "Brand is not found"));
+      return next(new apiError(404, "Can't delete brand"));
     } catch (error) {
       return next(error);
     }

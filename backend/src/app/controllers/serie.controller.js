@@ -5,10 +5,8 @@ const service = require("../services/serie.service");
 module.exports = {
 
   async getAll(req, res, next) {
-    payload = req.params;
-
     try {
-      var series = await service.getAll(payload);
+      var series = await service.getAll();
       return res.send(series);
     } catch (error) {
       return next(error);
@@ -61,7 +59,7 @@ module.exports = {
       var serie = await service.delete(payload);
       if (serie)
         return res.send("Deleted serie");
-      return next(new apiError(404, "Serie is not found"));
+      return next(new apiError(404, "Can't delete serie"));
     } catch (error) {
       return next(error);
     }

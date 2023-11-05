@@ -13,7 +13,7 @@ class ProductService {
     var products = [];
     for (var product of productsArray) {
       var payload = {
-        slug: product.pd_slug
+        id: product._id
       };
 
       product = await this.get(payload);
@@ -24,10 +24,8 @@ class ProductService {
   }
 
   async get(payload) {
-    var slug = payload.slug;
-    var product = await productModel.findOne({
-      pd_slug: slug,
-    });
+    var id = payload.id;
+    var product = await productModel.findById(id);
 
     if (product) {
       var productInfo = await productInfoModel.findById(product.pi_id);

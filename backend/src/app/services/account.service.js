@@ -1,5 +1,4 @@
-const apiError = require("../utils/error.utils")
-const userModel = require("../models/user.model");
+const customerModel = require("../models/customer.model");
 const staffModel = require("../models/staff.model");
 
 class AccountService {
@@ -10,24 +9,24 @@ class AccountService {
 
   async get(payload) {
     var id = payload.id;
-    var user = await userModel.findById(id);
-    if (user)
-      return user;
+    var customer = await customerModel.findById(id);
+    if (customer)
+      return customer;
     var staff = await staffModel.findById(id);
     return staff;
   }
 
   async create(payload) {
-    var user = new userModel({
-      us_name: payload.us_name,
-      us_email: payload.us_email,
-      us_password: payload.us_password,
-      us_address: payload.us_address,
-      us_phone: payload.us_phone,
+    var customer = new customerModel({
+      name: payload.name,
+      email: payload.email,
+      password: payload.password,
+      address: payload.address,
+      phone: payload.phone,
     });
 
-    await user.save();
-    return user;
+    await customer.save();
+    return customer;
   }
 
   async deleteAll() {
@@ -35,29 +34,29 @@ class AccountService {
 
   async delete(payload) {
     var id = payload.id;
-    var user = await userModel.findByIdAndDelete(id);
-    return user;
+    var customer = await customerModel.findByIdAndDelete(id);
+    return customer;
   }
 
   async update(payload) {
   }
 
   async login(payload) {
-    var user = await userModel.findOne({
-      us_email: payload.us_email,
-      us_password: payload.us_password,
-    }).then(user => {
-      return user;
+    var customer = await customerModel.findOne({
+      email: payload.email,
+      password: payload.password,
+    }).then(customer => {
+      return customer;
     });
 
     var staff = await staffModel.findOne({
-      s_email: payload.s_email,
-      s_password: payload.s_password,
+      email: payload.email,
+      password: payload.password,
     }).then(staff => {
       return staff;
     });
 
-    if (user) return user;
+    if (customer) return customer;
     if (staff) return staff;
   }
 }

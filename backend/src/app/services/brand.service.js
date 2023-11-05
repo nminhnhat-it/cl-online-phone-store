@@ -1,6 +1,7 @@
 const utils = require("../utils")
 const brandModel = require("../models/brand.model");
-const apiError = require("../utils/error.utils")
+const apiError = require("../utils/error.utils");
+const serieModel = require("../models/serie.model");
 
 class BrandService {
 
@@ -39,8 +40,10 @@ class BrandService {
 
   async delete(payload) {
     var id = payload.id;
-    var user = await brandModel.findByIdAndDelete(id);
-    return user;
+    var series = serieModel.find({ br_id: id })
+    if (series != [])
+      var result = await brandModel.findByIdAndDelete(id);
+    return result;
   }
 
   async update(payload) {

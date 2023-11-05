@@ -22,7 +22,7 @@ module.exports = {
     var payload = req.body;
 
     try {
-      var user = await service.create(payload);
+      var customer = await service.create(payload);
       return next();
     } catch (error) {
       if (error.name == "ValidationError") {
@@ -39,8 +39,8 @@ module.exports = {
     var payload = res.payload;
 
     try {
-      var user = await service.delete(payload);
-      if (user)
+      var customer = await service.delete(payload);
+      if (customer)
         return res.send("Deleted account");
 
       return next(new apiError(404, "Account is not found"));

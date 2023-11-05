@@ -9,6 +9,12 @@ const account = require("../controllers/account.controller")
 router.route("/login")
   .post(account.login, middlewares.generateToken)
 
+router.route("/logout")
+  .post(middlewares.clearToken)
+
+router.route("/verifyPermission")
+  .post(middlewares.verifyToken, middlewares.verifyPermission, account.get)
+
 router.route("/")
   .get(middlewares.verifyToken, account.get)
   .post(account.create, account.login, middlewares.generateToken)

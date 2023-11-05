@@ -17,11 +17,11 @@ module.exports = {
   generateToken: (req, res, next) => {
     var payload = res.payload
     var token = jwt.sign({
-      id: payload.id,
+      id: payload._id,
     }, config.auth.key, {
       expiresIn: config.auth.expire
     });
-
+    res.cookie("token", token, { expires: new Date(Date.now() + 24 * 3600000) })
     return res.json({
       token: token
     });
@@ -38,9 +38,9 @@ module.exports = {
         return next();
       }
     } catch (error) {
-      return next(new apiError(403, "You need login"));
+      res.clearCookie('token');
+      return next(new apiError(403, "You need to login"));
     }
-    next();
   },
 
   verifyPermission: async (req, res, next) => {
@@ -48,9 +48,14 @@ module.exports = {
       var staff = await staffModel.findById(res.payload.id);
       if (staff)
         return next();
-      return next(new apiError(403, "Access forbidden"));
+      return next(new apiError(403, "Access forbiden"));
     } catch (error) {
       return next(error);
     }
+  },
+
+  clearToken: async (req, res, next) => {
+    res.clearCookie('token');
+    return res.send("Clear token");
   }
 }

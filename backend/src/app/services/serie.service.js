@@ -2,17 +2,12 @@ const utils = require("../utils")
 const apiError = require("../utils/error.utils")
 const serieModel = require("../models/serie.model");
 const brandModel = require("../models/brand.model");
+const productModel = require("../models/product.model");
 
 class SerieService {
 
-  async getAll(payload) {
-    var brand = await brandModel.findOne({
-      br_slug: payload.br_slug
-    })
-
-    var series = await serieModel.find({
-      br_id: brand._id
-    });
+  async getAll() {
+    var series = await serieModel.find();
     return series;
   }
 
@@ -51,8 +46,10 @@ class SerieService {
 
   async delete(payload) {
     var id = payload.id;
-    var user = await serieModel.findByIdAndDelete(id);
-    return user;
+    var products = await productModel.find({ sr_id: id });
+    if (products != [])
+      var result = await serieModel.findByIdAndDelete(id);
+    return result;
   }
 
   async update(payload) {
@@ -61,7 +58,7 @@ class SerieService {
     serie.sr_title = payload.sr_title;
     serie.sr_slug = utils.toSlug(payload.sr_title);
     serie.br_id = payload.br_id;
-    
+
     await serie.save();
     return serie;
   }
