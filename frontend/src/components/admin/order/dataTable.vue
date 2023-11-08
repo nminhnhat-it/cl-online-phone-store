@@ -3,10 +3,11 @@
 export default {
   props: {
     dataArr: { type: Array, default: [] },
+    back: { type: String }
   },
   methods: {
     viewInfo(e) {
-      this.$store.state.back = 'admin.order.news';
+      this.$store.state.back = this.back;
       this.$router.push({ name: 'admin.order.info', params: { id: $(e.target).attr("id") } })
     },
 
@@ -14,8 +15,23 @@ export default {
       this.$store.state.id = $(e.target).attr("id");
       this.$emit("cancel:item");
     },
+
+    approveOrder(e) {
+      this.$store.state.id = $(e.target).attr("id");
+      this.$emit("approve:item");
+    },
+
+    shipOrder(e) {
+      this.$store.state.id = $(e.target).attr("id");
+      this.$emit("ship:item");
+    },
+
+    completeOrder(e) {
+      this.$store.state.id = $(e.target).attr("id");
+      this.$emit("complete:item");
+    },
   },
-  emits: ['cancel:item']
+  emits: ['cancel:item', "approve:item", "ship:item", "complete:item"]
 }
 </script>
 
@@ -39,8 +55,12 @@ export default {
       <td class="data-tb-col modify">
 
         <a :id="data._id" @click="viewInfo">View Info</a>
-        <a :id="data._id" @click="">Approve</a>
-        <a :id="data.id" @click="cancelOrder">Cancel</a>
+
+        <a v-if="data.od_status == 'await'" :id="data._id" @click="approveOrder">Approve</a>
+        <a v-if="data.od_status == 'prepare'" :id="data._id" @click="shipOrder">Ship</a>
+        <a v-if="data.od_status == 'ship'" :id="data._id" @click="completeOrder">Complete</a>
+
+        <a v-if="data.od_status != 'cancel' && data.od_status != 'complete'" :id="data._id" @click="cancelOrder">Cancel</a>
       </td>
     </tr>
   </table>

@@ -44,15 +44,6 @@ class OrderService {
       return null;
     }
   }
-
-  async delete(id) {
-    try {
-      var result = await this.api.delete(`/${id}`);
-      return result.data;
-    } catch (error) {
-      return null;
-    }
-  }
 }
 
 export default new OrderService();

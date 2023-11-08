@@ -9,6 +9,7 @@ import accountService from "@/services/account.service";
 export default defineComponent({
   props: {
     route: { type: Array, default: [] },
+    
   },
   components: {
     // vue-carousel components
@@ -24,7 +25,7 @@ export default defineComponent({
     },
     isActiveOffcanvas: false,
     isHidingOffcanvas: false,
-    adminOption: ["Order.News", "Category.Brands" , "Product.All"],
+    adminOption: ["Order.News", "Category.Brands", "Product.All"],
   }),
   computed: {
     isSignedIn() {

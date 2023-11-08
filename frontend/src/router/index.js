@@ -116,8 +116,38 @@ const routes = [
     }
   },
   {
-    path: "/admin/order/approves",
-    name: "admin.order.approves",
+    path: "/admin/order/prepares",
+    name: "admin.order.prepares",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/order/ships",
+    name: "admin.order.ships",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/order/completes",
+    name: "admin.order.completes",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/order/cancels",
+    name: "admin.order.cancels",
     component: () => import("@/views/admin.view.vue"),
     props: true,
     meta: {
@@ -226,6 +256,7 @@ const routes = [
       requiresPermission: true
     }
   },
+  
   {
     path: "/",
     name: "landing",

@@ -4,8 +4,12 @@ import accountService from "@/services/account.service";
 import navbar from "@/components/navbar.vue";
 import optionBar from "@/components/admin/optionBar.vue";
 
-import order from "@/components/admin/order/order.vue";
 import orderInfo from "@/components/admin/order/orderInfo.vue";
+import order from "@/components/admin/order/order.vue";
+import orderPrepare from "@/components/admin/order/orderPrepare.vue";
+import orderShip from "@/components/admin/order/orderShip.vue";
+import orderComplete from "@/components/admin/order/orderComplete.vue";
+import orderCancel from "@/components/admin/order/orderCancel.vue";
 
 import brand from "@/components/admin/brand/brand.vue";
 import serie from "@/components/admin/serie/serie.vue";
@@ -15,19 +19,20 @@ import productAdd from "@/components/admin/product/productAdd.vue";
 import productInfo from "@/components/admin/product/productInfo.vue";
 
 export default {
-  async setup() {
-    var user = await accountService.get();
-    var isStaff = await accountService.verifyPermission();
-    return { user, isStaff }
-  },
   props: {
-    id: { type: String}
+    user: { type: Object, required: true },
+    isStaff: { type: Object, required: true },
+    id: { type: String }
   },
   components: {
     navbar,
     optionBar,
-    order,
     orderInfo,
+    order,
+    orderPrepare,
+    orderShip,
+    orderComplete,
+    orderCancel,
     product,
     productAdd,
     productInfo,
@@ -42,8 +47,8 @@ export default {
   methods: {
     async retrieveUserData() {
       if (!this.$store.state.user) {
-        this.$store.state.user = this.user;
-        this.$store.state.isStaff = this.isStaff;
+        this.$store.state.user = await accountService.get();
+        this.$store.state.isStaff = await accountService.verifyPermission();
       }
     },
   },
@@ -57,8 +62,12 @@ export default {
   <navbar :route="getRoute" />
   <optionBar :route="getRoute" />
 
+  <orderInfo :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'info'" :id="this.id" />
   <order :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'news'" />
-  <orderInfo :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'info'" :id="this.id"/>
+  <orderPrepare :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'prepares'" :id="this.id" />
+  <orderShip :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'ships'" :id="this.id" />
+  <orderComplete :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'completes'" :id="this.id" />
+  <orderCancel :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'cancels'" :id="this.id" />
 
   <brand :route="getRoute" v-if="getRoute[1] == 'category' && getRoute[2] == 'brands'" />
   <serie :route="getRoute" v-if="getRoute[1] == 'category' && getRoute[2] == 'series'" />

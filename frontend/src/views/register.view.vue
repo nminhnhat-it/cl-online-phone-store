@@ -10,21 +10,46 @@ export default {
     ErrorMessage,
   },
   data() {
+    const registerFormSchema = yup.object().shape({
+      email: yup
+        .string()
+        .required("Email cannot be blank.")
+        .email("Invalid email.")
+        .max(255, "Email maximum 255 characters."),
+      password: yup
+        .string()
+        .required("Password cannot be blank.")
+        .max(255, "Password maximum 255 characters.")
+        .min(8, "Password at least 8 characters."),
+      comfirm_password: yup
+        .string()
+        .required("Password cannot be blank.")
+        .max(255, "Password maximum 255 characters.")
+        .min(8, "Password at least 8 characters.")
+        .oneOf([yup.ref('password')], 'Passwords must match'),
+      name: yup
+        .string()
+        .required("Name cannot be blank.")
+        .min(2, "Name at least 2 characters.")
+        .max(255, "Name has a maximum of 255 characters."),
+      address: yup
+        .string()
+        .max(255, "Maximum address 255 characters."),
+      phone: yup
+        .string()
+        .matches(/((09|03|07|08|05)+([0-9]{8})\b)/g, "Invalid phone number."),
+    });
     return {
+      registerFormSchema,
       credential: {}
     }
   },
   methods: {
     async submitRegister() {
       var data = this.credential;
-
-      try {
-        var user = await accountService.create(data);
-        if (user) {
-          this.$router.push({ name: "landing" });
-        }
-      } catch (error) {
-        console.log(error);
+      var user = await accountService.create(data);
+      if (user) {
+        this.$router.push({ name: "landing" });
       }
     },
   },
@@ -35,27 +60,27 @@ export default {
   <div class="container-fluid">
     <div class="row justify-content-end">
       <div class="signin-container-left col p-3" :style="{ backgroundImage: `url( ${'/src/assets/login/images/gradienta-faXXUrNbH1c-unsplash.jpg'} )` }">
-        <div id="carousel" class="carousel slide position-relative translate-middle-y top-50" data-bs-ride="carousel" data-ride-interval="6000">
+        <div id="carousel" class="carousel carousel-fade position-relative translate-middle-y top-50" data-bs-ride="carousel">
           <h2 class="text-secondary text-center mb-3">Hi guest !!</h2>
           <h3 class="text-secondary text-center mb-3">Get started with your account today.</h3>
           <div class="carousel-inner rounded">
-            <div class="carousel-item active ">
-              <img src="@/assets/login/images/smartphone-with-pumpkin-screen.jpg" class="d-block ratio w-100" alt="...">
+            <div class="carousel-item active" data-bs-interval="10000">
+              <img src="@/assets/login/images/smartphone-with-pumpkin-screen.jpg" class="d-block w-100" alt="...">
               <div class="carousel-caption carousel-caption-secondary d-none d-md-block">
                 <h4>The best place to buy Phone.</h4>
               </div>
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item" data-bs-interval="10000">
+              <img src="@/assets/login/images/ab44954c581b1a66_8af2eb6daf6fa0eb_3486616579698801118684.jpg" class="d-block w-100" alt="...">
               <div class="carousel-caption carousel-caption-secondary d-none d-md-block">
-                <h4>Impressive anime library of your choice.</h4>
+                <h4>The best place to buy Phone.</h4>
               </div>
-              <img src="@/assets/login/images/ab44954c581b1a66_8af2eb6daf6fa0eb_3486616579698801118684.jpg" class="d-block ratio w-100" alt="...">
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item" data-bs-interval="10000">
+              <img src="@/assets/login/images/bd8ca4efe3963ff5_67689fbbae9a20e2_10831716735199177118684.jpg" class="d-block w-100" alt="...">
               <div class="carousel-caption carousel-caption-secondary d-none d-md-block">
-                <h4>Experience Bliibii TV on multiple devices.</h4>
+                <h4>The best place to buy Phone.</h4>
               </div>
-              <img src="@/assets/login/images/bd8ca4efe3963ff5_67689fbbae9a20e2_10831716735199177118684.jpg" class="d-block ratio w-100" alt="...">
             </div>
           </div>
         </div>
@@ -64,7 +89,7 @@ export default {
         <div class="container">
           <router-link :to="{ name: 'landing' }">
             <div class="row justify-content-center mb-3 mt-2">
-              <img class="logo" src="@/assets/login/images/n-tech-high-resolution-logo-transparent.png" alt="">
+              <img class="logo" src="@/assets/images/logo-with-brand.png" alt="">
             </div>
           </router-link>
           <div class="row">
@@ -88,26 +113,36 @@ export default {
             </div>
           </div>
           <div class="row">
-            <Form @submit="submitRegister">
+            <Form @submit="submitRegister" :validation-schema="registerFormSchema">
               <div class="position-relative mb-3">
                 <label for="email" class="form-label form-float-label">Email</label>
                 <field v-model="this.credential.email" name="email" type="email" class="form-control form-control-secondary" id="email" aria-describedby="emailHelp" />
+                <ErrorMessage name="email" class="form-error-span" />
               </div>
               <div class="position-relative mb-3">
                 <label for="password" class="form-label form-float-label">Password (8+ characters)</label>
                 <field v-model="this.credential.password" name="password" type="password" class="form-control form-control-secondary" id="password" />
+                <ErrorMessage name="password" class="form-error-span" />
+              </div>
+              <div class="position-relative mb-3">
+                <label for="comfirm_password" class="form-label form-float-label">Comfirm Password (8+ characters)</label>
+                <field name="comfirm_password" type="comfirm_password" class="form-control form-control-secondary" id="comfirm_password" />
+                <ErrorMessage name="comfirm_password" class="form-error-span" />
               </div>
               <div class="position-relative mb-3">
                 <label for="name" class="form-label form-float-label">Full Name</label>
                 <field v-model="this.credential.name" name="name" type="name" class="form-control form-control-secondary" id="name" />
+                <ErrorMessage name="name" class="form-error-span" />
               </div>
               <div class="position-relative mb-3">
                 <label for="address" class="form-label form-float-label">Address</label>
                 <field v-model="this.credential.address" name="address" type="address" class="form-control form-control-secondary" id="address" />
+                <ErrorMessage name="address" class="form-error-span" />
               </div>
               <div class="position-relative mb-3">
                 <label for="phone" class="form-label form-float-label">Phone Number</label>
                 <field v-model="this.credential.phone" name="phone" type="phone" class="form-control form-control-secondary" id="phone" />
+                <ErrorMessage name="phone" class="form-error-span" />
               </div>
               <div class="d-grid mb-3">
                 <button type="submit" class="btn btn-6bc3e7">Create account</button>
@@ -269,5 +304,10 @@ a {
 .signin-container-left {
   background-position: center;
   background-size: cover;
+}
+
+.form-error-span {
+  color: red;
+  font-size: 12px !important;
 }
 </style>

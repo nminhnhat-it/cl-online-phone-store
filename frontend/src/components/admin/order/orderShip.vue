@@ -14,10 +14,10 @@ export default {
 
   computed: {
 
-    getNewOrders() {
+    getshipOrders() {
       var orders = this.$store.state.orders;
       if (orders) {
-        var news = orders.filter(order => order.od_status == 'await');
+        var news = orders.filter(order => order.od_status == 'ship');
         return news;
       }
     },
@@ -88,7 +88,7 @@ export default {
       </div>
     </div>
 
-    <dataTable :back="'admin.order.news'" v-if="this.route[3] == null" :route="this.route" @cancel:item="cancelOrder" @approve:item="approveOrder" @ship:item="shipOrder" @complete:item="completeOrder" :dataArr="getNewOrders" />
+    <dataTable :back="'admin.order.ships'" v-if="this.route[3] == null" :route="this.route" @cancel:item="cancelOrder" @approve:item="approveOrder" @ship:item="shipOrder" @complete:item="completeOrder" :dataArr="getshipOrders" />
 
   </div>
 </template>

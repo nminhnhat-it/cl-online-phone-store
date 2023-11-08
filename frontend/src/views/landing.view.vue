@@ -1,26 +1,37 @@
 <script>
+import accountService from "@/services/account.service";
+
 import navbar from "@/components/navbar.vue";
 import backToTopBtn from "@/components/backToTopBtn.vue";
 import footerInfo from "@/components/footerInfo.vue";
-import accountService from "@/services/account.service";
+
+import FocusWrapper from "@/components/landing/FocusWrapper.vue";
+import RowSlider from "@/components/landing/RowSlider.vue";
 
 export default {
-  async setup() {
-    var user = await accountService.get();
-    var isStaff = await accountService.verifyPermission();
-    return { user, isStaff }
+  props: {
+    user: { type: Object, required: true },
+    isStaff: { type: Object, required: true }
   },
   components: {
     navbar,
     backToTopBtn,
-    footerInfo
+    footerInfo,
+
+    FocusWrapper,
+    RowSlider,
   },
   methods: {
+
     retrieveUserData() {
       if (!this.$store.state.user) {
         this.$store.state.user = this.user;
         this.$store.state.isStaff = this.isStaff;
       }
+    },
+
+    retrieveProductData() {
+
     },
   },
   mounted() {
@@ -30,15 +41,18 @@ export default {
 </script>
  
 <template>
-  <navbar :key="Math.random()" />
+  <navbar />
   <div class="content">
+
+    <FocusWrapper />
+    <RowSlider />
 
     <footerInfo />
     <backToTopBtn />
   </div>
 </template>
 
-<style>
+<style scoped>
 * {
   margin: 0;
   padding: 0;

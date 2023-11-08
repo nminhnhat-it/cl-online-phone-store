@@ -14,18 +14,57 @@ export default {
     async retrieveInfo(id) {
       var order = await orderService.get(id);
       this.data = order;
-      console.log(this.data)
     },
 
-    cancelOrder(e) {
-      this.$store.state.id = $(e.target).attr("id");
-      this.$emit("cancel:item");
+    async cancelOrder(e) {
+      var id = $(e.target).attr("id");
+      var res = await orderService.update(id, { od_status: 'cancel' });
+      if (res) {
+        this.retrieveInfo(id);
+        alert("Canceled order");
+      }
+      else
+        alert("Can not cancel order");
+    },
+
+    async approveOrder(e) {
+      var id = $(e.target).attr("id");
+      var res = await orderService.update(id, { od_status: 'prepare' });
+      if (res) {
+        this.retrieveInfo(id);
+        alert("Approved order");
+      }
+      else
+        alert("Can not approve order");
+    },
+
+    async shipOrder(e) {
+      var id = $(e.target).attr("id");
+      var res = await orderService.update(id, { od_status: 'ship' });
+      if (res) {
+        this.retrieveInfo(id);
+        alert("Ship order");
+      }
+      else
+        alert("Can not ship order");
+    },
+
+    async completeOrder(e) {
+      var id = $(e.target).attr("id");
+      var res = await orderService.update(id, { od_status: 'complete' });
+      if (res) {
+        this.retrieveInfo(id);
+        alert("Complete order");
+      }
+      else
+        alert("Can not complete order");
     },
   },
   mounted() {
     this.retrieveInfo(this.id);
+    if (!this.$store.state.back)
+      this.$store.state.back = 'admin.order.news'
   },
-  emits: ['cancel:item']
 }
 </script>
 
@@ -39,13 +78,10 @@ export default {
 
     <hr>
     <div class="d-flex">
-          <router-link v-if="this.$store.state.back" :to="{ name: this.$store.state.back }">
-            <button @click="displayNextForm" class="btn btn-6bc3e7" style="width: 76px;">Back</button>
-          </router-link>
-          <router-link v-if="!this.$store.state.back" :to="{ name: 'admin.order.news' }">
-            <button @click="displayNextForm" class="btn btn-6bc3e7" style="width: 76px;">Back</button>
-          </router-link>
-        </div>
+      <router-link :to="{ name: this.$store.state.back }">
+        <button @click="displayNextForm" class="btn btn-6bc3e7" style="width: 76px;">Back</button>
+      </router-link>
+    </div>
     <table v-if="data" class="data-tb mt-3">
       <tr class="data-tb-row">
         <th class="data-tb-col" style="min-width: 102px;">Customer Name</th>
@@ -53,7 +89,7 @@ export default {
         <th class="data-tb-col" style="min-width: 102px;">Status</th>
         <th class="data-tb-col" style="min-width: 102px;">Date Created</th>
         <th class="data-tb-col" style="min-width: 102px;">Date Upadted</th>
-        <th class="data-tb-col" style="min-width: 102px;">Edit</th>
+        <th v-if="data.od_status != 'cancel'" class="data-tb-col" style="min-width: 102px;">Edit</th>
       </tr>
 
       <tr v-if="this.data.customer" class="data-tb-row">
@@ -62,10 +98,13 @@ export default {
         <td class="data-tb-col text-primary">{{ data.od_status }}</td>
         <td class="data-tb-col">{{ data.createdAt }}</td>
         <td class="data-tb-col">{{ data.updatedAt }}</td>
-        <td class="data-tb-col modify">
+        <td v-if="data.od_status != 'cancel' && data.od_status != 'complete'" class="data-tb-col modify">
 
-          <a v-if="data.od_status == 'await'" :id="data._id" @click="">Approve</a>
-          <a :id="data.id" @click="cancelOrder">Cancel</a>
+          <a v-if="data.od_status == 'await'" :id="data._id" @click="approveOrder">Approve</a>
+          <a v-if="data.od_status == 'prepare'" :id="data._id" @click="shipOrder">Ship</a>
+          <a v-if="data.od_status == 'ship'" :id="data._id" @click="completeOrder">Complete</a>
+
+          <a :id="data._id" @click="cancelOrder">Cancel</a>
         </td>
       </tr>
     </table>

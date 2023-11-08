@@ -15,8 +15,17 @@ export default {
       <router-link :to="{ name: `admin.${this.route[1]}.news` }">
         <a :class="{ 'active': this.route[2] == 'news' }" class="option-item"><span class="title">New Orders</span></a>
       </router-link>
-      <router-link :to="{ name: `admin.${this.route[1]}.approves` }">
-        <a :class="{ 'active': this.route[2] == 'approves' }" class="option-item"><span class="title">Preparing Orders</span></a>
+      <router-link :to="{ name: `admin.${this.route[1]}.prepares` }">
+        <a :class="{ 'active': this.route[2] == 'prepares' }" class="option-item"><span class="title">Preparing Orders</span></a>
+      </router-link>
+      <router-link :to="{ name: `admin.${this.route[1]}.ships` }">
+        <a :class="{ 'active': this.route[2] == 'ships' }" class="option-item"><span class="title">Shiping Orders</span></a>
+      </router-link>
+      <router-link :to="{ name: `admin.${this.route[1]}.completes` }">
+        <a :class="{ 'active': this.route[2] == 'completes' }" class="option-item"><span class="title">Completed Orders</span></a>
+      </router-link>
+      <router-link :to="{ name: `admin.${this.route[1]}.cancels` }">
+        <a :class="{ 'active': this.route[2] == 'cancels' }" class="option-item"><span class="title">Cancel Orders</span></a>
       </router-link>
     </div>
 

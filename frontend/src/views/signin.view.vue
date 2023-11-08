@@ -10,26 +10,41 @@ export default {
     ErrorMessage,
   },
   data() {
+    const loginFormSchema = yup.object().shape({
+      email: yup
+        .string()
+        .required("Email cannot be blank.")
+        .email("Invalid email.")
+        .max(255, "Email maximum 255 characters."),
+      password: yup
+        .string()
+        .required("Password cannot be blank.")
+        .max(255, "Password maximum 255 characters.")
+        .min(8, "Password at least 8 characters."),
+    });
     return {
-      credential: {}
+      loginFormSchema,
+      credential: {},
+      invalid_credential: false,
     }
   },
   methods: {
     async submitLogin() {
       var data = this.credential;
-
       try {
         var user = await accountService.login(data);
         var isStaff = await accountService.verifyPermission();
+
         if (isStaff) {
           this.$router.push({ name: "admin.order.news" });
         }
-        else
-          if (user) {
-            this.$router.push({ name: "landing" });
-          }
+        else if (user) {
+          this.$router.push({ name: "landing" });
+        }
+        else {
+          this.invalid_credential = true;
+        }
       } catch (error) {
-        console.log(error);
       }
     },
   },
@@ -39,49 +54,54 @@ export default {
 <template>
   <div class="container-fluid">
     <div class="row justify-content-end">
+
       <div class="signin-container-left col p-3" :style="{ backgroundImage: `url( ${'/src/assets/login/images/gradienta-faXXUrNbH1c-unsplash.jpg'} )` }">
-        <div id="carousel" class="carousel slide position-relative translate-middle-y top-50" data-bs-ride="carousel" data-ride-interval="6000">
+        <div id="carousel" class="carousel carousel-fade position-relative translate-middle-y top-50" data-bs-ride="carousel">
           <h2 class="text-secondary text-center mb-3">Wellcome !!</h2>
           <h3 class="text-secondary text-center mb-3">Sign in to your account</h3>
           <div class="carousel-inner rounded">
-            <div class="carousel-item active ">
-              <img src="@/assets/login/images/smartphone-with-pumpkin-screen.jpg" class="d-block ratio w-100" alt="...">
+            <div class="carousel-item active" data-bs-interval="10000">
+              <img src="@/assets/login/images/smartphone-with-pumpkin-screen.jpg" class="d-block w-100" alt="...">
               <div class="carousel-caption carousel-caption-secondary d-none d-md-block">
                 <h4>The best place to buy Phone.</h4>
               </div>
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item" data-bs-interval="10000">
+              <img src="@/assets/login/images/ab44954c581b1a66_8af2eb6daf6fa0eb_3486616579698801118684.jpg" class="d-block w-100" alt="...">
               <div class="carousel-caption carousel-caption-secondary d-none d-md-block">
-                <h4>Impressive anime library of your choice.</h4>
+                <h4>The best place to buy Phone.</h4>
               </div>
-              <img src="@/assets/login/images/ab44954c581b1a66_8af2eb6daf6fa0eb_3486616579698801118684.jpg" class="d-block ratio w-100" alt="...">
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item" data-bs-interval="10000">
+              <img src="@/assets/login/images/bd8ca4efe3963ff5_67689fbbae9a20e2_10831716735199177118684.jpg" class="d-block w-100" alt="...">
               <div class="carousel-caption carousel-caption-secondary d-none d-md-block">
-                <h4>Experience Bliibii TV on multiple devices.</h4>
+                <h4>The best place to buy Phone.</h4>
               </div>
-              <img src="@/assets/login/images/bd8ca4efe3963ff5_67689fbbae9a20e2_10831716735199177118684.jpg" class="d-block ratio w-100" alt="...">
             </div>
           </div>
         </div>
       </div>
+
       <div class="signin-container-right col-lg-4 col-12 bg-success bg-opacity-10 p-5 pt-0">
         <div class="container">
           <router-link :to="{ name: 'landing' }">
             <div class="row justify-content-center mb-3 mt-2">
-              <img class="logo" src="@/assets/login/images/n-tech-high-resolution-logo-transparent.png" alt="">
+              <img class="logo" src="@/assets/images/logo-with-brand.png" alt="">
             </div>
           </router-link>
           <div class="row mb-1">
-            <Form @submit="submitLogin">
+            <Form @submit="submitLogin" :validation-schema="loginFormSchema">
               <div class="position-relative mb-3">
                 <label for="email" class="form-label form-float-label">Email</label>
                 <Field v-model="this.credential.email" name="email" type="email" class="form-control form-control-secondary" id="email" aria-describedby="emailHelp" />
+                <ErrorMessage name="email" class="form-error-span" />
+                <span v-if="invalid_credential" name="email" class="form-error-span">Invalid credential</span>
               </div>
               <div class="position-relative mb-0">
                 <label for="password" class="form-label form-float-label">Password</label>
                 <Field v-model="this.credential.password" name="password" type="password" class="form-control form-control-secondary" id="password" />
               </div>
+              <ErrorMessage name="password" class=" form-error-span" />
               <div class="mb-2 text-end">
                 <a href="" class="link-5a5d60 text-decoration-none fs-sml fw-semibold">Forgot password?</a>
               </div>
@@ -211,21 +231,21 @@ a {
 }
 
 .form-control {
-    display: block;
-    width: 100%;
-    padding: .375rem .75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: var(--bs-body-color);
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-color: var(--bs-body-bg);
-    background-clip: padding-box;
-    border: var(--bs-border-width) solid var(--bs-border-color);
-    border-radius: var(--bs-border-radius);
-    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  display: block;
+  width: 100%;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--bs-body-color);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: var(--bs-body-bg);
+  background-clip: padding-box;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
 .form-control-secondary {
@@ -263,5 +283,10 @@ a {
 .signin-container-left {
   background-position: center;
   background-size: cover;
+}
+
+.form-error-span {
+  color: red;
+  font-size: 12px !important;
 }
 </style>
