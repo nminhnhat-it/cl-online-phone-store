@@ -12,7 +12,6 @@ class BrandService {
 
   async get(payload) {
     var slug = payload.slug;
-
     var brand = await brandModel.findOne({
       br_slug: slug,
     });
@@ -40,8 +39,8 @@ class BrandService {
 
   async delete(payload) {
     var id = payload.id;
-    var series = serieModel.find({ br_id: id })
-    if (series != [])
+    var series = await serieModel.find({ br_id: id })
+    if (!series[0])
       var result = await brandModel.findByIdAndDelete(id);
     return result;
   }

@@ -1,11 +1,18 @@
 <script>
 import accountService from "@/services/account.service";
+
 import navbar from "@/components/navbar.vue";
 import optionBar from "@/components/admin/optionBar.vue";
-import newOrder from "@/components/admin/newOrder.vue";
-import product from "@/components/admin/product.vue";
-import brand from "@/components/admin/brand.vue";
-import serie from "@/components/admin/serie.vue";
+
+import order from "@/components/admin/order/order.vue";
+import orderInfo from "@/components/admin/order/orderInfo.vue";
+
+import brand from "@/components/admin/brand/brand.vue";
+import serie from "@/components/admin/serie/serie.vue";
+
+import product from "@/components/admin/product/product.vue";
+import productAdd from "@/components/admin/product/productAdd.vue";
+import productInfo from "@/components/admin/product/productInfo.vue";
 
 export default {
   async setup() {
@@ -13,13 +20,19 @@ export default {
     var isStaff = await accountService.verifyPermission();
     return { user, isStaff }
   },
+  props: {
+    id: { type: String}
+  },
   components: {
     navbar,
     optionBar,
-    newOrder,
+    order,
+    orderInfo,
     product,
+    productAdd,
+    productInfo,
     brand,
-    serie
+    serie,
   },
   computed: {
     getRoute() {
@@ -44,14 +57,15 @@ export default {
   <navbar :route="getRoute" />
   <optionBar :route="getRoute" />
 
-  <brand :route="getRoute" v-if="getRoute[2] == 'brands'" />
+  <order :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'news'" />
+  <orderInfo :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'info'" :id="this.id"/>
 
-  <serie :route="getRoute" v-if="getRoute[2] == 'series'" />
-  
-  <!-- <newOrder :route="getRoute" v-if="getRoute[2] == 'news'" /> -->
-  
-  <!-- <product :route="getRoute" v-if="getRoute[1] == 'product' && getRoute[2] == 'all'" /> -->
+  <brand :route="getRoute" v-if="getRoute[1] == 'category' && getRoute[2] == 'brands'" />
+  <serie :route="getRoute" v-if="getRoute[1] == 'category' && getRoute[2] == 'series'" />
 
+  <product :route="getRoute" v-if="getRoute[1] == 'product' && getRoute[2] == 'all'" />
+  <productInfo :route="getRoute" v-if="getRoute[1] == 'product' && (getRoute[2] == 'info' || getRoute[2] == 'version')" />
+  <productAdd :route="getRoute" v-if="getRoute[1] == 'product' && getRoute[2] == 'add'" />
 </template>
 
 <style scoped>

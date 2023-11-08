@@ -15,7 +15,7 @@ router.route("/:id")
   .put(middlewares.verifyToken, middlewares.verifyPermission, serie.update)
   .delete(middlewares.verifyToken, middlewares.verifyPermission, serie.delete)
 
-router.route("/:br_slug/:sr_slug")
+router.route("/:slug")
   .get(serie.get)
 
 

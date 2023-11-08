@@ -14,7 +14,7 @@ const cartSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  us_id: {
+  ctm_id: {
     type: mongoose.ObjectId,
     required: [true, "User is required"],
   }

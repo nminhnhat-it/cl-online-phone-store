@@ -6,18 +6,15 @@ const productSchema = new Schema({
     type: String,
     required: [true, "Title is required"],
     maxLength: [1024, "Title is too long"],
-    minLength: [1, "Title is too short"],
   },
-  pd_decs: {
+  pd_desc: {
     type: String,
     maxLength: [3048, "Title is too long"],
-    minLength: [1, "Title is too short"],
   },
   pd_slug: {
     type: String,
     required: [true, "Slug is required"],
     maxLength: [1024, "Slug is too long"],
-    minLength: [1, "Slug is too short"],
   },
   pd_minPrice: {
     type: Number,

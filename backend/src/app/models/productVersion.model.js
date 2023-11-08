@@ -4,15 +4,13 @@ const Schema = mongoose.Schema;
 const productVersionSchema = new Schema({
   pv_img: {
     type: String,
-    required: [true, "Image is required"],
+    // required: [true, "Image is required"],
     maxLength: [1024, "Image is too long"],
-    minLength: [2, "Image is too short"],
   },
   pv_title: {
     type: String,
     required: [true, "Title is required"],
     maxLength: [1024, "Title is too long"],
-    minLength: [2, "Title is too short"],
   },
   pv_price: {
     type: Number,

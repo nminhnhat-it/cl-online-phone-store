@@ -52,11 +52,9 @@ export default {
         'slug': field == 'br_slug' || field == 'pd_slug' || field == 'sr_slug'
       }" class="data-tb-col">{{ value }}</td>
       <td class="data-tb-col modify">
-        <a v-if="route[2] == 'brands'" @click="editBrand">Edit</a>
 
+        <a v-if="route[2] == 'brands'" @click="editBrand">Edit</a>
         <a v-if="route[2] == 'brands'" @click="deleteBrand">Delete</a>
-        <a v-if="route[2] == 'series'" @click="deleteSerie">Delete</a>
-        <a v-if="route[1] == 'product' && route[2] == 'all'" @click="deleteProduct">Delete</a>
       </td>
     </tr>
   </table>

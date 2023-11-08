@@ -12,6 +12,7 @@ router.route("/")
   .delete(middlewares.verifyToken, middlewares.verifyPermission, order.deleteAll)
 
 router.route("/:id")
+  .get(middlewares.verifyToken, middlewares.verifyPermission, order.get)
   .put(middlewares.verifyToken, middlewares.verifyPermission, order.update)
 
 module.exports = router;

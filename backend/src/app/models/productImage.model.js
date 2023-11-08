@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const productImageSchema = new Schema({
-  im_link: {
+  im_path: {
     type: String,
     required: [true, "Image is required"],
     maxLength: [1024, "Image is too long"],

@@ -31,6 +31,18 @@ module.exports = {
     }
   },
 
+  async get(req, res, next) {
+    var payload = req.body;
+    payload.id = req.params.id;
+
+    try {
+      var orders = await service.get(payload);
+      return res.send(orders);
+    } catch (error) {
+      return next(error);
+    }
+  },
+
   async deleteAll(req, res, next) {
     try {
       await orderService.deleteAll();

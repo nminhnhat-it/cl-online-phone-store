@@ -4,27 +4,36 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 import brandService from "@/services/brand.service";
 
 export default {
-  props: {
-    data: { type: Object, default: {} }
-  },
   components: {
     Form,
     Field,
     ErrorMessage,
   },
-  methods: {
-    async submitBrand() {
-      var result = await brandService.create(this.data);
-      if (result)
-        alert("Added brand");
+  data() {
+    return {
+      data: {}
     }
+  },
+  methods: {
+    async submitForm() {
+      this.$store.state.data = this.data;
+      this.$emit("update:item");
+    },
+    async retrieveData() {
+      this.data = await brandService.get(this.$store.state.slug);
+      if (!this.data)
+        this.$router.push({ name: "admin.category.brands" });
+    }
+  },
+  mounted() {
+    this.retrieveData();
   }
 }
 </script>
 
 <template>
   <div class="upload-form-ctn mt-3">
-    <form @submit="submitBrand">
+    <Form @submit="submitForm">
       <div class="position-relative mb-3">
         <label for="br_title" class="form-label">Brand Title</label>
         <Field v-model="this.data.br_title" name="br_title" type="text" class="form-control form-control-secondary" id="br_title" />
@@ -37,7 +46,7 @@ export default {
       <router-link :to="{ name: 'admin.category.brands' }">
         <button class="btn btn-danger ms-3">Cancel</button>
       </router-link>
-    </form>
+    </Form>
   </div>
 </template>
 

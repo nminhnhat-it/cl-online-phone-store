@@ -1,5 +1,6 @@
 const customerModel = require("../models/customer.model");
 const staffModel = require("../models/staff.model");
+const cartModel = require("../models/cart.model");
 
 class AccountService {
 
@@ -24,6 +25,19 @@ class AccountService {
       address: payload.address,
       phone: payload.phone,
     });
+
+    var cart = await cartModel.findOne({
+      c_isOrder: false,
+    })
+    var carts = await cartModel.find();
+    if (cart && carts)
+      return null;
+
+    var cart = new cartModel({
+      ctm_id: customer._id,
+    })
+
+    cart.save();
 
     await customer.save();
     return customer;

@@ -1,7 +1,7 @@
 import createApiClient from "./api.service";
 
-class BrandService {
-  constructor(baseUrl = "/api/brands") {
+class OrderService {
+  constructor(baseUrl = "/api/orders") {
     this.api = createApiClient(baseUrl);
   }
 
@@ -27,9 +27,9 @@ class BrandService {
     return (await this.api.delete("/")).data;
   }
 
-  async get(slug) {
+  async get(id) {
     try {
-      var result = await this.api.get(`/${slug}`);
+      var result = await this.api.get(`/${id}`);
       return result.data;
     } catch (error) {
       return null;
@@ -55,4 +55,4 @@ class BrandService {
   }
 }
 
-export default new BrandService();
+export default new OrderService();

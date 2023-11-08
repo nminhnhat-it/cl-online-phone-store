@@ -13,6 +13,7 @@ const routes = [
     name: "notfound",
     component: () => import("@/views/NotFound.vue"),
   },
+
   {
     path: "/signin/",
     name: "signin",
@@ -31,6 +32,7 @@ const routes = [
       requiresAuth: false
     }
   },
+
   {
     path: "/admin/category/brands",
     name: "admin.category.brands",
@@ -61,9 +63,41 @@ const routes = [
       requiresPermission: true
     }
   },
+
   {
     path: "/admin/category/series",
     name: "admin.category.series",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/category/series/add",
+    name: "admin.category.series.add",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/category/series/edit",
+    name: "admin.category.series.edit",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+
+  {
+    path: "/admin/order/info/:id",
+    name: "admin.order.info",
     component: () => import("@/views/admin.view.vue"),
     props: true,
     meta: {
@@ -91,9 +125,100 @@ const routes = [
       requiresPermission: true
     }
   },
+
   {
     path: "/admin/product/all",
     name: "admin.product.all",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/product/info",
+    name: "admin.product.info",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/product/info/img",
+    name: "admin.product.info.img",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/product/info/edit",
+    name: "admin.product.info.edit",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/product/info/color/add",
+    name: "admin.product.info.color.add",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/product/info/color/edit",
+    name: "admin.product.info.color.edit",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/product/add",
+    name: "admin.product.add",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/product/add/version",
+    name: "admin.product.add.version",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/product/version/add",
+    name: "admin.product.version.add",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
+    path: "/admin/product/version/edit",
+    name: "admin.product.version.edit",
     component: () => import("@/views/admin.view.vue"),
     props: true,
     meta: {

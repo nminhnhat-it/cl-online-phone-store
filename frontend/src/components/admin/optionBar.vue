@@ -16,7 +16,7 @@ export default {
         <a :class="{ 'active': this.route[2] == 'news' }" class="option-item"><span class="title">New Orders</span></a>
       </router-link>
       <router-link :to="{ name: `admin.${this.route[1]}.approves` }">
-        <a :class="{ 'active': this.route[2] == 'approves' }" class="option-item"><span class="title">Approved Orders</span></a>
+        <a :class="{ 'active': this.route[2] == 'approves' }" class="option-item"><span class="title">Preparing Orders</span></a>
       </router-link>
     </div>
 
@@ -30,16 +30,18 @@ export default {
     </div>
 
     <div v-if="this.route[1] == 'product'" class="ctn">
-      <router-link :to="{ name: `admin.${this.route[1]}.all` }">
+      <router-link :to="{ name: `admin.product.all` }">
         <a :class="{ 'active': this.route[2] == 'all' }" class="option-item"><span class="title">All Products</span></a>
       </router-link>
-      <a :class="{ 'active': this.route[2] == 'add' }" class="option-item"><span class="title">Add Product</span></a>
+      <router-link :to="{ name: `admin.product.add` }">
+        <a :class="{ 'active': this.route[2] == 'add' }" class="option-item"><span class="title">Add Product</span></a>
+      </router-link>
     </div>
 
   </div>
 </template>
 
-<style>
+<style scoped>
 a {
   text-decoration: none;
 }

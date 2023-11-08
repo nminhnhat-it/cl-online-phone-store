@@ -7,10 +7,8 @@ const productInfoSchema = new Schema({
   },
   pi_camera: {
     type: String,
-    maxLength: [255, "Camera is too long"],
-    minLength: [1, "Camera is too short"],
   },
-  pi_batterry: {
+  pi_battery: {
     type: Number,
   },
   pi_mem: {
@@ -22,7 +20,6 @@ const productInfoSchema = new Schema({
   pi_chipset: {
     type: String,
     maxLength: [1024, "Chipset is too long"],
-    minLength: [1, "Chipset is too short"],
   },
 }, {
   versionKey: false,

@@ -8,19 +8,24 @@ class SerieService {
 
   async getAll() {
     var series = await serieModel.find();
-    return series;
+    var serieArr = [];
+    if (series) {
+      for (var serie of series) {
+        var brand = await brandModel.findById(serie.br_id);
+        serie = {
+          ...serie._doc,
+          br_title: brand.br_title
+        }
+        serieArr.push(serie);
+      }
+    }
+    return serieArr;
   }
 
   async get(payload) {
-    var brand = await brandModel.findOne({
-      br_slug: payload.br_slug
-    })
-
     var serie = await serieModel.findOne({
-      sr_slug: payload.sr_slug,
-      br_id: brand._id,
+      sr_slug: payload.slug,
     });
-
     return serie;
   }
 
@@ -47,7 +52,7 @@ class SerieService {
   async delete(payload) {
     var id = payload.id;
     var products = await productModel.find({ sr_id: id });
-    if (products != [])
+    if (!products[0])
       var result = await serieModel.findByIdAndDelete(id);
     return result;
   }

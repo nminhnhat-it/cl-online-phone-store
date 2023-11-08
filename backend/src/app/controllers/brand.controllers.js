@@ -15,7 +15,7 @@ module.exports = {
 
   async get(req, res, next) {
     var payload = req.params;
-
+    
     try {
       var brand = await service.get(payload);
       return res.send(brand);
@@ -35,6 +35,7 @@ module.exports = {
         error = utils.parseValidateError(error);
         return next(new apiError(422, error));
       }
+      return next(error);
     }
   },
 

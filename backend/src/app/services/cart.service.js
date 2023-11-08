@@ -49,7 +49,7 @@ class CartService {
       return null;
 
     var cart = new cartModel({
-      us_id: payload.id,
+      ctm_id: payload.id,
     })
 
     cart.save();
@@ -82,7 +82,7 @@ class CartService {
 
   async getByUserid(payload) {
     var cart = await cartModel.findOne({
-      us_id: payload.id,
+      ctm_id: payload.id,
       c_isOrder: false
     })
 
@@ -101,7 +101,7 @@ class CartService {
 
   async deleteByUserId(payload) {
     var cart = await cartModel.findOne({
-      us_id: payload.id,
+      ctm_id: payload.id,
       c_isOrder: false
     })
 
@@ -114,7 +114,7 @@ class CartService {
 
   async addCartInfoByUserId(payload) {
     var cart = await cartModel.findOne({
-      us_id: payload.id,
+      ctm_id: payload.id,
       c_isOrder: false
     })
 
@@ -139,7 +139,7 @@ class CartService {
     var cartInfo = await cartInfoModel.findByIdAndDelete(payload.ci_id);
     if (cartInfo) {
       var cart = await cartModel.findOne({
-        us_id: payload.id,
+        ctm_id: payload.id,
         c_isOrder: false
       })
 
@@ -161,7 +161,7 @@ class CartService {
     cartInfo.save();
 
     var cart = await cartModel.findOne({
-      us_id: payload.id,
+      ctm_id: payload.id,
       c_isOrder: false
     })
 
