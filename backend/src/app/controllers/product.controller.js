@@ -202,6 +202,70 @@ module.exports = {
       utils.deleteImage(payload.productImages)
       return next(error)
     }
-  }
+  },
 
+  async updateFocusImg(req, res, next) {
+    var payload = req.body;
+    payload.id = req.params.id;
+    payload.productImages = req.files;
+
+    try {
+      var error = await service.updateFocusImg(payload);
+      if (error) {
+        utils.deleteImage(payload.productImages)
+        return next(new apiError(422, error));
+      }
+      return res.send("Added focus image");
+    } catch (error) {
+      if (error.name == "ValidationError") {
+        utils.deleteImage(payload.productImages)
+        error = utils.parseValidateError(error);
+        return next(new apiError(422, error));
+      }
+      utils.deleteImage(payload.productImages)
+      return next(error)
+    }
+  },
+
+  async updateFocusImgBg(req, res, next) {
+    var payload = req.body;
+    payload.id = req.params.id;
+    payload.productImages = req.files;
+
+    try {
+      var error = await service.updateFocusImgBg(payload);
+      if (error) {
+        utils.deleteImage(payload.productImages)
+        return next(new apiError(422, error));
+      }
+      return res.send("Added focus background image");
+    } catch (error) {
+      if (error.name == "ValidationError") {
+        utils.deleteImage(payload.productImages)
+        error = utils.parseValidateError(error);
+        return next(new apiError(422, error));
+      }
+      utils.deleteImage(payload.productImages)
+      return next(error)
+    }
+  },
+
+  async isFocus(req, res, next){
+    var payload = req.body;
+    payload.id = req.params.id;
+
+    try {
+      var error = await service.isFocus(payload);
+      if (error) {
+        return next(new apiError(422, error));
+      }
+      return res.send("Added version");
+    } catch (error) {
+      if (error.name == "ValidationError") {
+        error = utils.parseValidateError(error);
+        return next(new apiError(422, error));
+      }
+      return next(error)
+    }
+  }
 }

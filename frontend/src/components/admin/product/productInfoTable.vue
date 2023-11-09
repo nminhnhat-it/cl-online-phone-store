@@ -43,10 +43,21 @@ export default {
       this.$store.state.id = $(e.target).attr("id");
       this.$store.state.productVersion = await productService.getVersion(this.$store.state.id);
       this.$router.push({ name: "admin.product.version.edit" });
+    },
+
+    async isFocusChange(e) {
+      var data = {};
+      if (e.target.value == 'true')
+        data.pd_isFocusProduct = false;
+      if (e.target.value == 'false')
+        data.pd_isFocusProduct = true;
+
+      await productService.isFocusProduct(this.data._id, data);
+      this.$emit("reload:info");
     }
 
   },
-  emits: ["delete:image", "delete:version"]
+  emits: ["delete:image", "delete:version", "reload:info"]
 }
 </script>
 
@@ -67,6 +78,7 @@ export default {
         <th class="data-tb-col" style="min-width: 102px;">Memory</th>
         <th class="data-tb-col" style="min-width: 102px;">Ram Memory</th>
         <th class="data-tb-col" style="min-width: 102px;">Chipset</th>
+        <th class="data-tb-col" style="min-width: 102px;">Focus Product</th>
         <th class="data-tb-col" style="min-width: 102px;"></th>
       </tr>
 
@@ -80,12 +92,37 @@ export default {
         <td class="data-tb-col">{{ data.productInfo.pi_mem }}</td>
         <td class="data-tb-col">{{ data.productInfo.pi_ram }}</td>
         <td class="data-tb-col">{{ data.productInfo.pi_chipset }}</td>
+        <td class="data-tb-col">
+          <input @change="isFocusChange" :checked="data.pd_isFocusProduct" class="form-check-input" type="checkbox" :value="data.pd_isFocusProduct" style="cursor: pointer;">
+        </td>
 
         <td class="data-tb-col modify">
           <router-link :to="{ name: 'admin.product.info.edit' }">
             <a :slug="data.pd_slug">Edit</a>
           </router-link>
         </td>
+      </tr>
+    </table>
+  </div>
+
+  <div v-if="data.pd_isFocusProduct">
+    <hr>
+    <h5 class="mt-3">Focus Images</h5>
+    <table class="data-tb">
+      <tr class="data-tb-row">
+        <th v-if="data.pd_focusImg" class="data-tb-col" style="min-width: 102px;">
+          <img :src="this.$store.state.apiUrl + data.pd_focusImg" alt="" style=" max-width: 300px;">
+        </th>
+        <th v-if="data.pd_focusImgBg" class="data-tb-col" style="min-width: 102px;">
+          <img :src="this.$store.state.apiUrl + data.pd_focusImgBg" alt="" style=" max-width: 300px;">
+        </th>
+
+        <td class="data-tb-col modify" style="text-align: center;">
+          <router-link :to="{name: 'admin.product.info.focus'}">
+            <a>Change</a>
+          </router-link>
+        </td>
+
       </tr>
     </table>
   </div>
@@ -129,7 +166,7 @@ export default {
         <td class="data-tb-col">{{ productVersion.pv_title }}</td>
         <td class="data-tb-col">{{ productVersion.pv_price }}</td>
         <td class="data-tb-col">{{ productVersion.pv_quantity }}</td>
-        <td class="data-tb-col" :link="productVersion.pv_img">
+        <td class="data-tb-col">
           <img :src="this.$store.state.apiUrl + productVersion.pv_img" alt="" style="max-width: 300px;">
         </td>
         <td class="data-tb-col modify">

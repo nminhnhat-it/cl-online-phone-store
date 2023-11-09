@@ -1,3 +1,4 @@
+import axios from "axios";
 import createApiClient from "./api.service";
 
 class BrandService {
@@ -16,9 +17,14 @@ class BrandService {
 
   async create(data) {
     try {
-      var result = await this.api.post("/", data);
+      var result = await axios.post('/api/brands', data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      })
       return result.data;
     } catch (error) {
+      console.log(error)
       return null;
     }
   }
@@ -38,7 +44,11 @@ class BrandService {
 
   async update(id, data) {
     try {
-      var result = await this.api.put(`/${id}`, data);
+      var result = await axios.put(`/api/brands/${id}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      })
       return result.data;
     } catch (error) {
       return null;

@@ -42,7 +42,17 @@ export default {
     async updateBrand() {
       var data = this.$store.state.data;
       var id = this.$store.state.data._id;
-      var result = await brandService.update(id, data)
+
+      var formdata = new FormData();
+      for (const [key, value] of Object.entries(data)) {
+        formdata.append(key, value);
+      }
+      if (this.$store.state.images)
+        for (const image of this.$store.state.images) {
+          formdata.append('brandImage', image, image.name);
+        }
+
+      var result = await brandService.update(id, formdata)
       if (result)
         alert("Update success");
       else
@@ -52,7 +62,16 @@ export default {
 
     async addBrand() {
       var data = this.$store.state.data;
-      var result = await brandService.create(data);
+      var formdata = new FormData();
+      for (const [key, value] of Object.entries(data)) {
+        formdata.append(key, value);
+      }
+      if (this.$store.state.images)
+        for (const image of this.$store.state.images) {
+          formdata.append('brandImage', image, image.name);
+        }
+
+      var result = await brandService.create(formdata);
       if (result) {
         this.$store.state.data = {};
         alert("Add success");
@@ -65,7 +84,6 @@ export default {
 
   mounted() {
     this.retrieveBrandData();
-
   }
 }
 </script>

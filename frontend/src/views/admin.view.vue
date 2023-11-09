@@ -20,8 +20,8 @@ import productInfo from "@/components/admin/product/productInfo.vue";
 
 export default {
   props: {
-    user: { type: Object, required: true },
-    isStaff: { type: Object, required: true },
+    user: { type: Object, default: {} },
+    isStaff: { type: Object, default: {} },
     id: { type: String }
   },
   components: {
@@ -46,10 +46,8 @@ export default {
   },
   methods: {
     async retrieveUserData() {
-      if (!this.$store.state.user) {
-        this.$store.state.user = await accountService.get();
-        this.$store.state.isStaff = await accountService.verifyPermission();
-      }
+      this.$store.state.user = this.user;
+      this.$store.state.isStaff = this.isStaff;
     },
   },
   mounted() {

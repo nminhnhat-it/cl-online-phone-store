@@ -20,6 +20,16 @@ const productSchema = new Schema({
     type: Number,
     default: 0,
   },
+  pd_focusImgBg: {
+    type: String
+  },
+  pd_focusImg: {
+    type: String
+  },
+  pd_isFocusProduct: {
+    type: Boolean,
+    default: false
+  },
   sr_id: {
     type: mongoose.ObjectId,
     required: [true, "Series is required"],

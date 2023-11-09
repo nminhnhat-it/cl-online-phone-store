@@ -15,15 +15,21 @@ export default {
     }
   },
   methods: {
+    
     async submitForm() {
       this.$store.state.data = this.data;
       this.$emit("update:item");
     },
+
     async retrieveData() {
       this.data = await brandService.get(this.$store.state.slug);
       if (!this.data)
         this.$router.push({ name: "admin.category.brands" });
-    }
+    },
+
+    getImages(e) {
+      this.$store.state.images = e.target.files;
+    },
   },
   mounted() {
     this.retrieveData();
@@ -41,6 +47,10 @@ export default {
       <div class="position-relative mb-3">
         <label for="br_desc" class="form-label">Brand Descriptions</label>
         <Field v-model="this.data.br_desc" name="br_desc" type="text" class="form-control form-control-secondary" id="br_desc" />
+      </div>
+      <div class="position-relative mb-3">
+        <label for="brandImage" class="form-label">Image</label>
+        <Field @change="getImages" tabindex="-1" multiple name="brandImage" type="file" class="form-control form-control-secondary" id="brandImage" accept="image/*" />
       </div>
       <button type="submit" class="btn btn-6bc3e7">Submit</button>
       <router-link :to="{ name: 'admin.category.brands' }">

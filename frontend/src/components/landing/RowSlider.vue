@@ -99,12 +99,14 @@ export default defineComponent({
       <Carousel @vue:updated="calcCartSize" ref="myCarousel" v-bind="settings" :breakpoints="breakpoints">
         <Slide v-for="slide in 20" :key="slide">
           <div class="carousel__item">
-            <a v-bind:slug="slide" class="card" target='_blank' href="#">
-              <img @mouseenter="activeAnimeInfoPopup" :src="`http://localhost:3000/public/uploads/2023-11-08T11:23:05.621Ziphone_15_128gb_-_1_1.webp`" class="card-img-top" alt="...">
-              <div class="name-container p-1">
-                <p class="card-text">1099</p>
-              </div>
-            </a>
+            <router-link :to="{name: 'landing'}">
+              <a v-bind:slug="slide" class="card" target='_blank' href="#">
+                <img @mouseenter="activeAnimeInfoPopup" :src="`http://localhost:3000/public/uploads/2023-11-08T11:23:05.621Ziphone_15_128gb_-_1_1.webp`" class="card-img-top" alt="...">
+                <div class="name-container p-1">
+                  <p class="card-text">iPhone 15 Pro <p class="text-danger" style="text-align: left;">$1099</p></p>
+                </div>
+              </a>
+            </router-link>
           </div>
         </Slide>
         <template #addons>
@@ -130,7 +132,15 @@ export default defineComponent({
   </a>
 </template>
 
+<style>
+.row-sliders-container .row-slider .carousel .carousel__viewport {
+  padding-top: 10px;
+  padding-bottom: 20px;
+}
+</style>
+
 <style scoped>
+
 .row-sliders-container {
   margin-top: -14% !important;
   position: relative;
@@ -138,8 +148,11 @@ export default defineComponent({
 }
 
 .row-sliders-container .row-slider {
-  padding-left: 38px;
-  padding-right: 38px;
+  padding-left: 18px;
+  padding-right: 18px;
+  margin: 48px;
+  background-color: #e8f3ee;
+  border-radius: 5px;
 }
 
 .row-sliders-container .row-slider .title {
@@ -183,8 +196,7 @@ export default defineComponent({
 }
 
 .row-sliders-container .row-slider .carousel .carousel__viewport {
-  padding-top: 2%;
-  padding-bottom: 2%;
+  padding-bottom: 20px;
 }
 
 .row-sliders-container .row-slider .carousel .carousel__viewport .carousel__slide {

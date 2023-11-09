@@ -27,6 +27,7 @@ export default {
       <th class="data-tb-col" style="min-width: 102px;">Title</th>
       <th class="data-tb-col" style="min-width: 102px;">Slug</th>
       <th class="data-tb-col" style="min-width: 102px;">Descriptions</th>
+      <th class="data-tb-col" style="min-width: 102px;">Logo</th>
       <th class="data-tb-col" style="min-width: 102px;">Date Created</th>
       <th class="data-tb-col" style="min-width: 102px;">Date Upadted</th>
       <th class="data-tb-col" style="min-width: 102px;">Edit</th>
@@ -37,6 +38,9 @@ export default {
       <td class="data-tb-col">{{ data.br_title }}</td>
       <td class="data-tb-col">{{ data.br_slug }}</td>
       <td class="data-tb-col">{{ data.br_desc }}</td>
+      <td class="data-tb-col">
+        <img v-if="data.br_img" :src="this.$store.state.apiUrl + data.br_img" alt="" style="max-width: 200px;">
+      </td>
       <td class="data-tb-col">{{ data.createdAt }}</td>
       <td class="data-tb-col">{{ data.updatedAt }}</td>
 

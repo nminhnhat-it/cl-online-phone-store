@@ -124,6 +124,42 @@ class ProductService {
       return null;
     }
   }
+
+  async isFocusProduct(id, data) {
+    try {
+      var result = await this.api.put(`/focus/${id}`, data);
+      return result.data;
+    } catch (error) {
+      console.log(error)
+      return null;
+    }
+  }
+
+  async addFocusImage(id, data) {
+    try {
+      var result = await axios.post(`/api/products/focus/${id}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      })
+      return result.data;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async addFocusImageBg(id, data) {
+    try {
+      var result = await axios.post(`/api/products/focusBg/${id}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      })
+      return result.data;
+    } catch (error) {
+      return null;
+    }
+  }
 }
 
 export default new ProductService();

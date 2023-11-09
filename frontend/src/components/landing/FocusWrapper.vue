@@ -1,13 +1,10 @@
 <script>
 export default {
-  data() {
-    return {
-      focusProduct: [
-        1, 2, 3, 4
-      ],
-    }
+  props: {
+    focusProducts: { type: Array, default: [] },
   },
   methods: {
+
     focusWrapperChange(e) {
       var focusWrapper = $(e.target);
 
@@ -46,17 +43,18 @@ export default {
   <div class="focus-wrapper m-0 p-0">
     <div id="focus-carousel" class="carousel slide carousel-fade" data-bs-ride="true" data-bs-interval="6000">
       <div class="carousel-indicators px-5 mx-0">
-        <button v-for="(slide, key) in this.focusProduct" :class="{ active: !key }" class="mx-0 ms-1" type="button" data-bs-target="#focus-carousel" :data-bs-slide-to="key" :aria-current="`${!key}`" :aria-label="`Slide ${key}`"></button>
+        <button v-for="(product, key) in this.focusProducts" :class="{ active: !key }" class="mx-0 ms-1" type="button" data-bs-target="#focus-carousel" :data-bs-slide-to="key" :aria-current="`${!key}`" :aria-label="`Slide ${key}`"></button>
       </div>
       <div class="carousel-inner">
-        <a v-for="(slide, key) in this.focusProduct" v-on:transitionstart="focusWrapperChange" :class="{ active: key == 0 }" class="focus-item carousel-item">
+        <a v-for="(product, key) in this.focusProducts" v-on:transitionstart="focusWrapperChange" :class="{ active: key == 0 }" class="focus-item carousel-item">
           <a class="focus-img-link" target='_blank'></a>
           <div class="vertical-layer"></div>
           <div class="horizontal-layer"></div>
-          <img :src="`http://localhost:3000/public/uploads/2023-11-08T05:38:19.923Zvn_iphone_15_black_pdp_image_position-1a_black_color_1_4.webp`" class="d-block focus-img" alt="...">
-          <div class="focus-img-character" :style="{ backgroundImage: `url(http://localhost:3000/public/uploads/2023-11-08T05:38:19.923Zvn_iphone_15_black_pdp_image_position-1a_black_color_1_4.webp)` }"></div>
+          <img :src="`${this.$store.state.apiUrl + product.pd_focusImgBg}`" class="d-block focus-img" alt="...">
+          <div class="focus-img-character" :style="{ backgroundImage: `url(${this.$store.state.apiUrl + product.pd_focusImg})` }"></div>
           <div class="focus-decs-wrapper">
-            <div class="focus-item-name" :style="{ backgroundImage: `url(http://localhost:3000/public/uploads/2023-11-08T11:23:05.621Ziphone_15_128gb_-_1_1.webp)` }"></div>
+            <div class="focus-item-logo" :style="{ backgroundImage: `url(${this.$store.state.apiUrl + product.brand.br_img})` }"></div>
+            <div class="focus-item-name text-black fs-4 d-flex">iPhone 15</div>
             <div class="focus-item-desc text-black">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius animi neque molestias delectus, magnam quas unde ab vel in blanditiis ipsa, eos veritatis excepturi nemo iste ut autem praesentium accusamus.</div>
           </div>
         </a>
@@ -215,7 +213,7 @@ export default {
   padding-right: 48px;
 }
 
-.focus-wrapper .focus-decs-wrapper .focus-item-name {
+.focus-wrapper .focus-decs-wrapper .focus-item-logo {
   background-size: contain;
   width: 20.5vw;
   min-width: 180px;
@@ -225,6 +223,11 @@ export default {
   min-height: 120px;
   background-position: left bottom;
   background-repeat: no-repeat;
+}
+
+.focus-wrapper .focus-decs-wrapper .focus-item-name:hover {
+  color: #33a0cb !important;
+  cursor: pointer;
 }
 
 .focus-wrapper .focus-decs-wrapper div {

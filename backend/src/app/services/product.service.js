@@ -4,6 +4,8 @@ const productModel = require("../models/product.model");
 const productImageModel = require("../models/productImage.model");
 const productInfoModel = require("../models/productInfo.model");
 const productVersionModel = require("../models/productVersion.model");
+const serieModel = require("../models/serie.model");
+const brandModel = require("../models/brand.model");
 
 class ProductService {
 
@@ -44,11 +46,16 @@ class ProductService {
         pd_id: product._id
       })
 
+      var serie = await serieModel.findById(product.sr_id)
+      var brand = await brandModel.findById(serie.br_id)
+
       product = {
         ...product._doc,
         productInfo: productInfo,
         productVersions: productVersions,
-        productImages: productImages
+        productImages: productImages,
+        serie: serie,
+        brand: brand,
       }
     }
 
@@ -169,6 +176,18 @@ class ProductService {
       fs.unlinkSync(filePath);
     }
 
+    if (product.pd_focusImg) {
+      var fs = require('fs');
+      var filePath = './' + product.pd_focusImg;
+      fs.unlinkSync(filePath);
+    }
+
+    if (product.pd_focusImgBg) {
+      var fs = require('fs');
+      var filePath = './' + product.pd_focusImgBg;
+      fs.unlinkSync(filePath);
+    }
+
     var productVersions = await productVersionModel.find({
       pd_id: id
     })
@@ -251,6 +270,43 @@ class ProductService {
       var filePath = './' + oldImg;
       fs.unlinkSync(filePath);
     }
+  }
+
+  async updateFocusImg(payload) {
+    var product = await productModel.findById(payload.id);
+
+    if (payload.productImages[0]) {
+      if (product.pd_focusImg) {
+        var fs = require('fs');
+        var filePath = './' + product.pd_focusImg;
+        fs.unlinkSync(filePath);
+      }
+      product.pd_focusImg = payload.productImages[0].path;
+    }
+
+    await product.save()
+  }
+
+  async updateFocusImgBg(payload) {
+    var product = await productModel.findById(payload.id);
+
+    if (payload.productImages[0]) {
+      if (product.pd_focusImgBg) {
+        var fs = require('fs');
+        var filePath = './' + product.pd_focusImgBg;
+        fs.unlinkSync(filePath);
+      }
+      product.pd_focusImgBg = payload.productImages[0].path;
+    }
+
+    await product.save()
+  }
+
+  async isFocus(payload) {
+    var product = await productModel.findById(payload.id);
+
+    product.pd_isFocusProduct = payload.pd_isFocusProduct;
+    await product.save();
   }
 }
 

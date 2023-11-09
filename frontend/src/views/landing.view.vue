@@ -1,5 +1,5 @@
 <script>
-import accountService from "@/services/account.service";
+import productService from "@/services/product.service";
 
 import navbar from "@/components/navbar.vue";
 import backToTopBtn from "@/components/backToTopBtn.vue";
@@ -10,8 +10,9 @@ import RowSlider from "@/components/landing/RowSlider.vue";
 
 export default {
   props: {
-    user: { type: Object, required: true },
-    isStaff: { type: Object, required: true }
+    user: { type: Object, default: {} },
+    isStaff: { type: Object, default: {} },
+    products: { type: Array }
   },
   components: {
     navbar,
@@ -21,21 +22,26 @@ export default {
     FocusWrapper,
     RowSlider,
   },
-  methods: {
+  computed: {
 
-    retrieveUserData() {
-      if (!this.$store.state.user) {
-        this.$store.state.user = this.user;
-        this.$store.state.isStaff = this.isStaff;
-      }
+    getProducts() {
+      return this.products;
     },
 
-    retrieveProductData() {
+    getFocusProducts() {
+      var focusProducts = this.products.filter(product => product.pd_isFocusProduct == true);
+      return focusProducts;
+    },
+  },
+  methods: {
 
+    retrieveUser() {
+      this.$store.state.user = this.user;
+      this.$store.state.isStaff = this.isStaff;
     },
   },
   mounted() {
-    this.retrieveUserData();
+    this.retrieveUser();
   }
 }
 </script>
@@ -44,8 +50,8 @@ export default {
   <navbar />
   <div class="content">
 
-    <FocusWrapper />
-    <RowSlider />
+    <FocusWrapper :focusProducts="getFocusProducts" />
+    <!-- <RowSlider /> -->
 
     <footerInfo />
     <backToTopBtn />

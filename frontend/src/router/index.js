@@ -217,6 +217,16 @@ const routes = [
     }
   },
   {
+    path: "/admin/product/info/focus",
+    name: "admin.product.info.focus",
+    component: () => import("@/views/admin.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresPermission: true
+    }
+  },
+  {
     path: "/admin/product/add",
     name: "admin.product.add",
     component: () => import("@/views/admin.view.vue"),

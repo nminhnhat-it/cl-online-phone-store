@@ -43,4 +43,11 @@ router.route("/version/:id")
   .delete(middlewares.verifyToken, middlewares.verifyPermission, product.deleteVersion)
   .put(middlewares.verifyToken, middlewares.verifyPermission, upload.array('productImages', 1), product.updateVersion)
 
+router.route("/focus/:id")
+  .post(middlewares.verifyToken, middlewares.verifyPermission, upload.array('productImages', 1), product.updateFocusImg)
+  .put(middlewares.verifyToken, middlewares.verifyPermission, product.isFocus)
+
+router.route("/focusBg/:id")
+  .post(middlewares.verifyToken, middlewares.verifyPermission, upload.array('productImages', 1), product.updateFocusImgBg)
+
 module.exports = router;

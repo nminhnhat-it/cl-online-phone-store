@@ -16,6 +16,10 @@ const brandSchema = new Schema({
     required: [true, "Slug is required"],
     maxLength: [255, "Slug is too long"],
   },
+  br_img: {
+    type: String,
+    maxLength: [1024, "Image is too long"],
+  }
 }, {
   versionKey: false,
   timestamps: true

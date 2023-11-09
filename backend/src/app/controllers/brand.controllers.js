@@ -15,7 +15,7 @@ module.exports = {
 
   async get(req, res, next) {
     var payload = req.params;
-    
+
     try {
       var brand = await service.get(payload);
       return res.send(brand);
@@ -26,15 +26,18 @@ module.exports = {
 
   async create(req, res, next) {
     var payload = req.body;
+    payload.brandImage = req.files;
 
     try {
       var brand = await service.create(payload);
       return res.send("Added brand");
     } catch (error) {
       if (error.name == "ValidationError") {
+        utils.deleteImage(payload.brandImage)
         error = utils.parseValidateError(error);
         return next(new apiError(422, error));
       }
+      utils.deleteImage(payload.brandImage)
       return next(error);
     }
   },
@@ -67,15 +70,18 @@ module.exports = {
   async update(req, res, next) {
     var payload = req.body;
     payload.id = req.params.id;
+    payload.brandImage = req.files;
 
     try {
       var brand = await service.update(payload);
       return res.send("Updated brand infomations");
     } catch (error) {
       if (error.name == "ValidationError") {
+        utils.deleteImage(payload.brandImage)
         error = utils.parseValidateError(error);
         return next(new apiError(422, error));
       }
+      utils.deleteImage(payload.brandImage)
       return next(new apiError(404, "Brand is not found"));
     }
   },

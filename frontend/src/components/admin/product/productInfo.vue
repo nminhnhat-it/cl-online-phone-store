@@ -5,6 +5,7 @@ import serieService from "@/services/serie.service";
 import dataTable from "@/components/admin/product/dataTable.vue";
 import productFormEdit from "@/components/admin/product/productFormEdit.vue";
 import productImageFormAdd from "@/components/admin/product/productImageFormAdd.vue";
+import productFocusImageForm from "@/components/admin/product/productFocusImageForm.vue";
 import productInfoTable from "@/components/admin/product/productInfoTable.vue";
 import productVersionFormAdd from "@/components/admin/product/productVersionFormAdd.vue";
 import productVersionFormEdit from "@/components/admin/product/productVersionFormEdit.vue";
@@ -27,7 +28,8 @@ export default {
     productInfoTable,
     productImageFormAdd,
     productVersionFormAdd,
-    productVersionFormEdit
+    productVersionFormEdit,
+    productFocusImageForm
   },
 
   computed: {
@@ -43,6 +45,10 @@ export default {
   },
 
   methods: {
+
+    reloadInfo() {
+      this.getProductInfo();
+    },
 
     async retrieveSerie() {
       this.$store.state.series = this.series;
@@ -105,6 +111,31 @@ export default {
         alert("Can not add image");
     },
 
+    async addFocusImage() {
+      var formdata = new FormData();
+      if (this.$store.state.image)
+        for (const image of this.$store.state.image) {
+          formdata.append('productImages', image, image.name);
+        }
+
+      var res = await productService.addFocusImage(this.$store.state.productInfo._id,formdata);
+
+      var formdata2 = new FormData();
+      if (this.$store.state.focusImage)
+        for (const image1 of this.$store.state.focusImage) {
+          formdata2.append('productImages', image1, image1.name);
+        }
+
+      var res2 = await productService.addFocusImageBg(this.$store.state.productInfo._id,formdata2);
+
+      if (res && res2) {
+        this.getProductInfo();
+        alert("Add success");
+      }
+      else
+        alert("Can not add image");
+    },
+
     async addVersion() {
       var formdata = new FormData();
       var data = this.$store.state.data;
@@ -159,7 +190,8 @@ export default {
     </div>
 
     <productImageFormAdd :route="route" v-if="this.route[3] == 'img'" @add:item="addImage" />
-    <productInfoTable v-if="this.route[2] == 'info' && this.route[3] == null" :data="getProductInfos" @delete:image="deleteImage" @delete:version="deleteVersion" />
+    <productFocusImageForm :route="route" v-if="this.route[3] == 'focus'" @add:item="addFocusImage" />
+    <productInfoTable v-if="this.route[2] == 'info' && this.route[3] == null" :data="getProductInfos" @delete:image="deleteImage" @delete:version="deleteVersion" @reload:info="reloadInfo" />
     <productFormEdit v-if="this.route[2] == 'info' && this.route[3] == 'edit'" @update:item="updateProductInfo" :productInfo="getProductInfos" />
     <productVersionFormAdd :route="route" v-if="this.route[2] == 'version' && this.route[3] == 'add'" @add:item="addVersion" />
     <productVersionFormEdit :route="route" v-if="this.route[2] == 'version' && this.route[3] == 'edit'" @update:item="updateVersion" />

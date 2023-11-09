@@ -1,12 +1,14 @@
 <script>
 import * as yup from "yup";
 import { Form, Field, ErrorMessage } from "vee-validate";
-import brandService from "@/services/brand.service";
+import productService from "@/services/product.service";
 
 export default {
+  props: {
+    route: { type: Array, default: [] },
+  },
   data() {
     return {
-      data: {}
     }
   },
   components: {
@@ -15,41 +17,46 @@ export default {
     ErrorMessage,
   },
   methods: {
-    async submitForm() {
-      this.$store.state.data = this.data;
-      this.data = {};
-      this.$emit("add:item");
+
+    async getImages(e) {
+      this.$store.state.image = e.target.files;
     },
 
-    getImages(e) {
-      this.$store.state.images = e.target.files;
+    async getFocusImages(e) {
+      this.$store.state.focusImage = e.target.files;
+    },
+
+    async submitForm() {
+      this.$emit("add:item");
     },
   },
-  emits: ['add:item']
+  emits: ["add:item"]
 }
 </script>
 
 <template>
-  <div class="upload-form-ctn mt-3">
-    <Form @submit="submitForm">
-      <div class="position-relative mb-3">
-        <label for="br_title" class="form-label">Brand Title</label>
-        <Field v-model="this.data.br_title" name="br_title" type="text" class="form-control form-control-secondary" id="br_title" />
+  <Form @submit="submitForm">
+    <hr>
+    <div class="row">
+      <div v-if="this.route[3] == 'focus'" class="upload-form-ctn">
+        <div class="position-relative mb-3">
+          <label for="productImages" class="form-label">Focus Image</label>
+          <Field @change="getImages" tabindex="-1" multiple name="productImages" type="file" class="form-control form-control-secondary" id="productImages" accept="image/*" />
+        </div>
+        <div class="position-relative mb-3">
+          <label for="productImages" class="form-label">Background Images</label>
+          <Field @change="getFocusImages" tabindex="-1" multiple name="productImages" type="file" class="form-control form-control-secondary" id="productImages" accept="image/*" />
+        </div>
       </div>
-      <div class="position-relative mb-3">
-        <label for="br_desc" class="form-label">Brand Descriptions</label>
-        <Field v-model="this.data.br_desc" name="br_desc" type="text" class="form-control form-control-secondary" id="br_desc" />
-      </div>
-      <div class="position-relative mb-3">
-        <label for="brandImage" class="form-label">Image</label>
-        <Field @change="getImages" tabindex="-1" multiple name="brandImage" type="file" class="form-control form-control-secondary" id="brandImage" accept="image/*" />
-      </div>
-      <button type="submit" class="btn btn-6bc3e7">Submit</button>
-      <router-link :to="{ name: 'admin.category.brands' }">
-        <button class="btn btn-danger ms-3">Cancel</button>
+    </div>
+    <hr>
+    <div v-if="this.route[3] == 'focus'" class="d-flex justify-content-end">
+      <router-link :to="{ name: 'admin.product.info' }">
+        <button class="btn btn-danger ms-auto" style="width: 76px;">Back</button>
       </router-link>
-    </Form>
-  </div>
+      <button type="submit" class="btn btn-6bc3e7 ms-auto" style="width: 76px;">Submit</button>
+    </div>
+  </Form>
 </template>
 
 <style scoped>
