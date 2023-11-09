@@ -9,7 +9,7 @@ import accountService from "@/services/account.service";
 export default defineComponent({
   props: {
     route: { type: Array, default: [] },
-    
+    brands: { type: Array, default: [] },
   },
   components: {
     // vue-carousel components
@@ -35,35 +35,44 @@ export default defineComponent({
     },
   },
   methods: {
+
     async signOut() {
       await accountService.logout();
       this.$store.state.user = null;
     },
+
     showDropDown(e) {
       $(e.target).parent().find(".dropdown-menu").addClass("show");
       $(e.target).parent().find(".dropdown-toggle").addClass("open");
     },
+
     closeDropDown(e) {
       $(e.target).find(".dropdown-menu").removeClass("show");
       $(e.target).find(".dropdown-toggle").removeClass("open");
     },
-    showDeleteFormBtn(e) {
+
+    showDeleteSearchBtn(e) {
       if (e.target.value != "")
         $(".clear-btn").removeAttr("style");
       else
         $(".clear-btn").attr("style", "display : none !important");
     },
-    closeDeleteFormBtn: function (e) {
+
+    closeDeleteSearchBtn: function (e) {
+      $(".navbar .search-form .search-input-container").width("230px")
       $(e.target).attr("style", "display : none !important");
     },
+
     showOffcanvas(e) {
       this.isActiveOffcanvas = true;
       this.isHidingOffcanvas = false;
     },
+
     closeOffcanvas(e) {
       this.isActiveOffcanvas = false;
       this.isHidingOffcanvas = true;
     },
+
     scrolled() {
       const navbar = $(".navbar");
       if (navbar.length && window.pageYOffset > 50) {
@@ -96,25 +105,26 @@ export default defineComponent({
           <img class="brand-logo" src="@/assets/user/images/n-tech-high-resolution-logo-transparent.png" alt="">
         </a>
       </router-link>
-      <div v-if="this.route[0] != 'admin'" class="nav me-auto">
+      <div v-if="this.route[0] != 'admin' && this.brands[0]" class="nav me-auto">
         <div class="nav-item">
-          <a class="nav-link px-0 pe-3 active" aria-current="page">Anime</a>
+          <router-link :to="{ name: `landing.brands`, params: { slug: `${this.brands[0].br_slug}` } }">
+            <a class="nav-link px-0 pe-3">{{ this.brands[0].br_title }}</a>
+          </router-link>
         </div>
         <div class="nav-item">
-          <a class="nav-link px-0 pe-3">Movie</a>
+
+          <router-link :to="{ name: `landing.brands`, params: { slug: `${this.brands[1].br_slug}` } }">
+            <a class="nav-link px-0 pe-3">{{ this.brands[1].br_title }}</a>
+          </router-link>
         </div>
         <div v-on:mouseover="showDropDown" v-on:mouseleave="closeDropDown" class="link-collapse nav-item dropdown-center me-3">
           <div class="nav-link dropdown-toggle px-0" aria-expanded="true"></div>
           <div class="dropdown-menu">
             <ul class="dropdown-container bg-e8f3ee">
-              <li class="dropdown-item p-0">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-              </li>
-              <li class="dropdown-item p-0">
-                <a class="nav-link" href="#">Movie</a>
-              </li>
-              <li class="dropdown-item p-0">
-                <a class="nav-link">Link</a>
+              <li v-for="                  brand                   in                     this.brands                    " class="dropdown-item p-0">
+                <router-link :to="{ name: `landing.brands`, params: { slug: `${brand.br_slug}` } }">
+                  <a class="nav-link" aria-current="page">{{ brand.br_title }}</a>
+                </router-link>
               </li>
             </ul>
           </div>
@@ -218,14 +228,14 @@ export default defineComponent({
       </div>
       <form class="d-flex search-form" role="search">
         <div class="input-group search-input-container input-group-sm border rounded bg-e8f3ee" style="--bs-bg-opacity: 0.5">
-          <input @input="showDeleteFormBtn" class="search-input form-control bg-opacity-10" placeholder="Search your favorite!" aria-label="Search">
-          <button v-on:click="closeDeleteFormBtn" class="clear-btn btn btn-close rounded-circle" type="reset" style="display: none !important;"></button>
+          <input @input="showDeleteSearchBtn" class="search-input form-control bg-opacity-10" placeholder="Search your favorite!" aria-label="Search">
+          <button v-on:click="closeDeleteSearchBtn" class="clear-btn btn btn-close rounded-circle" type="reset" style="display: none !important;"></button>
           <a class="btn search-icon" type="submit"><i class="fa-solid fa-magnifying-glass"></i></a>
         </div>
       </form>
       <div v-if="this.route[0] == 'admin'" class="sub-nav nav">
         <Carousel v-bind="settings">
-          <Slide v-for="option in  adminOption " :key="option">
+          <Slide v-for="                    option                     in                      adminOption                     " :key="option">
             <router-link :to="{ name: `admin.${option.toLowerCase()}` }">
               <div :class="{ active: option.split('.')[0].toLowerCase() == this.route[1] }" class="carousel__item">
                 <a class="nav-link" href="#">{{ option.split('.')[0] }}</a>
@@ -237,7 +247,7 @@ export default defineComponent({
 
       <div v-if="!this.route[0] == 'admin'" class="sub-nav nav">
         <Carousel v-bind="settings">
-          <Slide v-for=" slide  in  3 " :key="slide">
+          <Slide v-for="                     slide                      in                      3                     " :key="slide">
             <div class="carousel__item">
               <a class="nav-link" href="#">{{ slide }}</a>
             </div>
@@ -328,6 +338,7 @@ a {
 
 .navbar .nav-link:hover {
   color: #5fb8db !important;
+  cursor: pointer;
 }
 
 .navbar .nav .nav-item:last-child {
@@ -535,6 +546,7 @@ a {
 
 .navbar .search-form .search-input-container {
   width: 230px;
+  transition: all 0.5s;
 }
 
 .navbar .search-form .search-input-container .search-input {

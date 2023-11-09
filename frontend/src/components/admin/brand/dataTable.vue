@@ -37,9 +37,9 @@ export default {
       <td class="data-tb-col">{{ key + 1 }}</td>
       <td class="data-tb-col">{{ data.br_title }}</td>
       <td class="data-tb-col">{{ data.br_slug }}</td>
-      <td class="data-tb-col">{{ data.br_desc }}</td>
+      <td class="data-tb-col" style="text-overflow: ellipsis; max-width: 200px;">{{ data.br_desc }}</td>
       <td class="data-tb-col">
-        <img v-if="data.br_img" :src="this.$store.state.apiUrl + data.br_img" alt="" style="max-width: 200px;">
+        <img v-if="data.br_img" :src="this.$store.state.apiUrl + data.br_img" alt="" style="max-width: 100px; max-height: 60px;">
       </td>
       <td class="data-tb-col">{{ data.createdAt }}</td>
       <td class="data-tb-col">{{ data.updatedAt }}</td>

@@ -14,7 +14,8 @@ class SerieService {
         var brand = await brandModel.findById(serie.br_id);
         serie = {
           ...serie._doc,
-          br_title: brand.br_title
+          br_title: brand.br_title,
+          br_slug: brand.br_slug
         }
         serieArr.push(serie);
       }

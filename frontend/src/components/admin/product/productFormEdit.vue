@@ -9,7 +9,32 @@ export default {
     productInfo: { type: Object, default: {} }
   },
   data() {
+    const FormSchema = yup.object().shape({
+      pd_title: yup
+        .string()
+        .required("Title cannot be blank.")
+        .max(255, "Title maximum 255 characters."),
+      pd_desc: yup
+        .string()
+        .max(255, "Descriptions maximum 255 characters."),
+      sr_id: yup
+        .string()
+        .required("Serie cannot be blank."),
+      productImages: yup
+        .mixed()
+        .required("Images cannot be blank."),
+      pi_camera: yup
+        .string()
+        .max(255, "Camera info maximum 255 characters."),
+      pi_battery: yup
+        .string()
+        .max(255, "Battery info maximum 255 characters."),
+      pi_chipset: yup
+        .string()
+        .max(255, "Chipset info maximum 255 characters."),
+    });
     return {
+      FormSchema,
       data: {},
       screenSizes: [5.4, 6.1, 6.7],
       rams: [2, 4, 6, 8, 12, 16],
@@ -83,57 +108,66 @@ export default {
 </script>
 
 <template>
-  <Form @submit="submitForm">
+  <Form @submit="submitForm" :validation-schema="FormSchema">
     <div class="row">
       <div v-if="!this.route[3]" class="upload-form-ctn">
         <hr>
         <div class="position-relative mb-3">
           <label for="pd_title" class="form-label">Title</label>
           <Field v-model="this.data.pd_title" name="pd_title" type="text" class="form-control form-control-secondary" id="pd_title" />
+          <ErrorMessage name="pd_title" class="form-error-span" />
         </div>
         <div class="position-relative mb-3">
           <label for="pd_desc" class="form-label">Descriptions</label>
           <Field v-model="this.data.pd_desc" name="pd_desc" type="text" class="form-control form-control-secondary" id="pd_desc" />
+          <ErrorMessage name="pd_desc" class="form-error-span" />
         </div>
         <div class="category-chose mb-3">
           <label for="sr_id" class="form-label">Serie</label>
-          <select v-model="this.data.sr_id" name="sr_id" id="sr_id" class="form-select form-control form-control-secondary">
+          <Field as="select" v-model="this.data.sr_id" name="sr_id" id="sr_id" class="form-select form-control form-control-secondary">
             <option disabled value="">Choose Serie</option>
             <option v-for="serie in this.$store.state.series" :value="serie._id">{{ serie.sr_title }}</option>
-          </select>
+          </Field>
+          <ErrorMessage name="sr_id" class="form-error-span" />
         </div>
         <div class="position-relative mb-3">
           <label for="pi_camera" class="form-label">Camera Info</label>
           <Field v-model="this.data.pi_camera" name="pi_camera" type="text" class="form-control form-control-secondary" id="pi_camera" />
+          <ErrorMessage name="pi_camera" class="form-error-span" />
         </div>
         <div class="position-relative mb-3">
           <label for="pi_battery" class="form-label">Battery Info</label>
           <Field v-model="this.data.pi_battery" name="pi_battery" type="text" class="form-control form-control-secondary" id="pi_battery" />
+          <ErrorMessage name="pi_battery" class="form-error-span" />
         </div>
         <div class="category-chose mb-3">
           <label for="pi_screen" class="form-label">Screen Size</label>
-          <select v-model="this.data.pi_screen" name="pi_screen" id="pi_screen" class="form-select form-control form-control-secondary">
+          <Field as="select" v-model="this.data.pi_screen" name="pi_screen" id="pi_screen" class="form-select form-control form-control-secondary">
             <option disabled value="">Choose Screen Size</option>
             <option v-for="size in this.screenSizes" :value="size">{{ size }} inch</option>
-          </select>
+          </Field>
+          <ErrorMessage name="pi_screen" class="form-error-span" />
         </div>
         <div class="category-chose mb-3">
           <label for="pi_mem" class="form-label">Memory Info</label>
-          <select v-model="this.data.pi_mem" name="pi_mem" id="pi_mem" class="form-select form-control form-control-secondary">
+          <Field as="select" v-model="this.data.pi_mem" name="pi_mem" id="pi_mem" class="form-select form-control form-control-secondary">
             <option disabled value="">Choose Memory</option>
             <option v-for="mem in this.mems" :value="mem">{{ mem }} GB</option>
-          </select>
+          </Field>
+          <ErrorMessage name="pi_mem" class="form-error-span" />
         </div>
         <div class="category-chose mb-3">
           <label for="pi_ram" class="form-label">Ram Memory</label>
-          <select v-model="this.data.pi_ram" name="pi_ram" id="pi_ram" class="form-select form-control form-control-secondary">
+          <Field as="select" v-model="this.data.pi_ram" name="pi_ram" id="pi_ram" class="form-select form-control form-control-secondary">
             <option disabled value="">Choose Ram Memory</option>
             <option v-for="ram in this.rams" :value="ram">{{ ram }} GB</option>
-          </select>
+          </Field>
+          <ErrorMessage name="pi_ram" class="form-error-span" />
         </div>
         <div class="position-relative mb-3">
           <label for="pi_chipset" class="form-label">Chipset Info</label>
           <Field v-model="this.data.pi_chipset" name="pi_chipset" type="text" class="form-control form-control-secondary" id="pi_chipset" />
+          <ErrorMessage name="pi_chipset" class="form-error-span" />
         </div>
         <hr>
         <div class="d-flex justify-content-end">

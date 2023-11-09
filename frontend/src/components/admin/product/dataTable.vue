@@ -37,7 +37,7 @@ export default {
     <tr class="data-tb-row">
       <th class="data-tb-col">#</th>
       <th class="data-tb-col" style="min-width: 102px;">Title</th>
-      <th class="data-tb-col" style="min-width: 102px;">Descriptions</th >
+      <th class="data-tb-col" style="min-width: 102px;">Descriptions</th>
       <th class="data-tb-col" style="min-width: 102px;">Slug</th>
       <th class="data-tb-col" style="min-width: 102px;">Price</th>
       <th class="data-tb-col" style="min-width: 102px;">Date Created</th>
@@ -48,7 +48,7 @@ export default {
     <tr v-for="(data, key) in this.dataArr" class="data-tb-row">
       <td class="data-tb-col">{{ key + 1 }}</td>
       <td class="data-tb-col">{{ data.pd_title }}</td>
-      <td class="data-tb-col">{{ data.pd_desc }}</td>
+      <td class="data-tb-col" style="text-overflow: ellipsis; max-width: 200px;">{{ data.pd_desc }}</td>
       <td class="data-tb-col">{{ data.pd_slug }}</td>
       <td class="data-tb-col">{{ data.pd_minPrice }}</td>
       <td class="data-tb-col">{{ data.createdAt }}</td>

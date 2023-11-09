@@ -7,10 +7,14 @@ import { Carousel, Slide, Navigation } from 'vue3-carousel'
 
 export default defineComponent({
   setup() {
-    const myCarousel = ref([]);
+    const product__slider = ref([]);
     return {
-      myCarousel
+      product__slider
     }
+  },
+  props: {
+    series: { type: Array, default: [] },
+    products: { type: Array, default: [] },
   },
   components: {
     // vue-carousel components
@@ -25,22 +29,22 @@ export default defineComponent({
     },
     breakpoints: {
       0: {
-        itemsToShow: 3,
+        itemsToShow: 2,
       },
       575: {
-        itemsToShow: 4,
+        itemsToShow: 3,
       },
       767: {
-        itemsToShow: 5,
+        itemsToShow: 4,
       },
       992: {
-        itemsToShow: 6
+        itemsToShow: 5
       },
       1399: {
-        itemsToShow: 7
+        itemsToShow: 6
       },
       1600: {
-        itemsToShow: 8
+        itemsToShow: 7
       }
     },
 
@@ -49,13 +53,22 @@ export default defineComponent({
     w: null,
     isActive: false,
     styleObj: null,
-    selectedMovie: null,
-
-    movies: [1,2,3,4,5],
-      kinds: [1,2,3,4,5]
+    popupProduct: null,
   }),
   methods: {
-    activeAnimeInfoPopup(e) {
+
+    getProductsOfSerie(serie) {
+      var products = this.products.filter(product => product.serie._id == serie._id);
+      return products
+    },
+
+    getPopupProduct(slug) {
+      var product = this.products.filter(product => product.pd_slug == slug);
+      return product[0];
+    },
+
+    activeProductPopup(e) {
+      this.popupProduct = this.getPopupProduct($(e.target).parent().attr("slug"));
       if ($(window).width() >= 768)
         this.isActive = true;
 
@@ -72,16 +85,19 @@ export default defineComponent({
         width: this.w + "px",
       })
     },
-    unActiveAnimeInfoPopup() {
+
+    unActiveProductPopup() {
       this.obj = null;
       this.h = null;
       this.w = null;
       this.isActive = false;
       this.styleObj = null;
+      this.popupProduct = null;
     },
+
     calcCartSize() {
-      if (this.myCarousel[0]) {
-        $(".row-sliders-container .row-slider .carousel__item").width(($(".row-sliders-container .row-slider .carousel__track").width() / this.myCarousel[0].data.config.itemsToShow) - 15)
+      if (this.product__slider[0]) {
+        $(".row-sliders-container .row-slider .carousel__item").width(($(".row-sliders-container .row-slider .carousel__track").width() / this.product__slider[0].data.config.itemsToShow) - 15)
         $(".row-sliders-container .row-slider .carousel__item .card-img-top").height(1.5 * $(".row-sliders-container .row-slider .carousel__item").width())
       }
     },
@@ -94,18 +110,19 @@ export default defineComponent({
 
 <template>
   <div class="row-sliders-container m-0">
-    <div v-for="kind in this.kinds" class="row-slider mb-2">
-      <h2 class="title m-0 mb-2">Serie</h2>
-      <Carousel @vue:updated="calcCartSize" ref="myCarousel" v-bind="settings" :breakpoints="breakpoints">
-        <Slide v-for="slide in 20" :key="slide">
+    <div v-for="serie in this.series" class="row-slider mb-2 pt-2">
+      <h2 class="title m-0 mb-2">{{ serie.sr_title }}</h2>
+      <Carousel @vue:updated="calcCartSize" ref="product__slider" v-bind="settings" :breakpoints="breakpoints">
+        <Slide v-for="(product, key) in getProductsOfSerie(serie)" :key="key">
           <div class="carousel__item">
-            <router-link :to="{name: 'landing'}">
-              <a v-bind:slug="slide" class="card" target='_blank' href="#">
-                <img @mouseenter="activeAnimeInfoPopup" :src="`http://localhost:3000/public/uploads/2023-11-08T11:23:05.621Ziphone_15_128gb_-_1_1.webp`" class="card-img-top" alt="...">
+            <router-link :to="{ name: 'landing' }">
+              <div v-bind:slug="product.pd_slug" class="card" target='_blank' href="#">
+                <img @mouseenter="activeProductPopup" :src="this.$store.state.apiUrl + product.productVersions[0].pv_img" class="card-img-top" alt="...">
                 <div class="name-container p-1">
-                  <p class="card-text">iPhone 15 Pro <p class="text-danger" style="text-align: left;">$1099</p></p>
+                  <p class="card-text m-0">{{ product.pd_title }}</p>
+                  <p class="card-text text-danger" style="text-align: left;">${{ Number(product.pd_minPrice).toLocaleString() }}</p>
                 </div>
-              </a>
+              </div>
             </router-link>
           </div>
         </Slide>
@@ -115,19 +132,18 @@ export default defineComponent({
       </Carousel>
     </div>
   </div>
-  <a v-if="isActive" @mouseleave="unActiveAnimeInfoPopup" class="anime-info-popup card" href="#" target="_blank" :style="styleObj">
-    <img :src="`http://localhost:3000/public/uploads/2023-11-08T11:23:05.621Ziphone_15_128gb_-_1_1.webp`" class=" card-img-top" alt="...">
+
+  <a v-if="isActive" @mouseleave="unActiveProductPopup" class="product-info-popup card" href="#" target="_blank" :style="styleObj">
+    <img :src="$store.state.apiUrl + popupProduct.productImages[0].im_path" class=" card-img-top" alt="...">
     <div class='info-container card-body'>
-      <div class='info-name text-start'>{{ }}</div>
-      <div class='d-flex text-black mb-1'>
-        <div class='info-item-score'><i class='fa-solid fa-star'></i> 5.0</div>
-        <div class='info-item-year'>{{ }}</div>
-        <div class='info-item-update'>{{ }} Episode</div>
+      <div class='info-name text-start mb-1'>{{ popupProduct.pd_title }}</div>
+      <div class='d-flex info-popup-product mb-2'>
+        <div class='info-item-popup me-1 px-1'>{{ popupProduct.productInfo.pi_screen }} inches</div>
+        <div class='info-item-popup me-1 px-1'>{{ popupProduct.productInfo.pi_ram }} GB</div>
+        <div class='info-item-popup me-1 px-1'>{{ popupProduct.productInfo.pi_mem }} GB</div>
       </div>
-      <div class='d-flex info-category mb-1'>
-        <div v-for="slide in 3" class='info-item-category me-1 px-1'>{{ slide }}</div>
-      </div>
-      <div class='info-item-description text-black'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim ratione et neque quae, eaque voluptatem qui suscipit sit ab. Voluptas, reprehenderit. Possimus tenetur nam labore ipsa, sequi dolorem tempora iste..</div>
+      <div class='d-flex text-black mb-1'>Prices: <span class="text-danger">${{ popupProduct.pd_minPrice }}</span></div>
+      <div class='info-item-description text-black'>{{ popupProduct.pd_desc }}.</div>
     </div>
   </a>
 </template>
@@ -137,10 +153,42 @@ export default defineComponent({
   padding-top: 10px;
   padding-bottom: 20px;
 }
+
+.row-sliders-container .row-slider .carousel .carousel__next {
+  left: 100.5% !important;
+  font-weight: 900 !important;
+  font-family: "Font Awesome 6 Free";
+  color: #33a0cb !important;
+  font-size: xx-large !important;
+  width: 40px;
+  z-index: 3;
+  transform: translateY(-100%) !important;
+  opacity: 0.5;
+}
+
+.row-sliders-container .row-slider .carousel .carousel__prev {
+  right: 100.5% !important;
+  left: unset !important;
+  font-weight: 900 !important;
+  font-family: "Font Awesome 6 Free";
+  color: #33a0cb !important;
+  font-size: xx-large !important;
+  width: 40px;
+  z-index: 3;
+  transform: translateY(-100%) !important;
+  opacity: 0.5;
+}
+
+.row-sliders-container .row-slider .carousel .carousel__prev:hover {
+  opacity: 1 !important;
+}
+
+.row-sliders-container .row-slider .carousel .carousel__next:hover {
+  opacity: 1 !important;
+}
 </style>
 
 <style scoped>
-
 .row-sliders-container {
   margin-top: -14% !important;
   position: relative;
@@ -160,39 +208,6 @@ export default defineComponent({
   padding-right: 10px;
   color: #5a5d60;
   text-shadow: 0 0 10px #fff;
-}
-
-.row-sliders-container .row-slider .carousel .carousel__prev {
-  right: 99% !important;
-  left: unset !important;
-  font-weight: 900 !important;
-  font-family: "Font Awesome 6 Free";
-  color: #33a0cb !important;
-  font-size: xx-large !important;
-  width: 40px;
-  z-index: 3;
-  transform: translateY(-100%) !important;
-  opacity: 0.5;
-}
-
-.row-sliders-container .row-slider .carousel .carousel__prev:hover {
-  opacity: 1 !important;
-}
-
-.row-sliders-container .row-slider .carousel .carousel__next {
-  left: 99% !important;
-  font-weight: 900 !important;
-  font-family: "Font Awesome 6 Free";
-  color: #33a0cb !important;
-  font-size: xx-large !important;
-  width: 40px;
-  z-index: 3;
-  transform: translateY(-100%) !important;
-  opacity: 0.5;
-}
-
-.row-sliders-container .row-slider .carousel .carousel__next:hover {
-  opacity: 1 !important;
 }
 
 .row-sliders-container .row-slider .carousel .carousel__viewport {
@@ -218,7 +233,7 @@ export default defineComponent({
   height: 280px;
   box-shadow: 0 0 7px 4px #0000001a;
   border-radius: 5px;
-  object-fit: fill;
+  object-fit: cover;
 }
 
 .row-sliders-container .row-slider .carousel .carousel__viewport .carousel__slide .carousel__item .card .card-text:hover {
@@ -237,7 +252,7 @@ export default defineComponent({
   -webkit-box-orient: vertical;
 }
 
-.anime-info-popup {
+.product-info-popup {
   transition: all 0.3s ease-in;
   background-color: #ffffff;
   color: #8d989a !important;
@@ -247,32 +262,32 @@ export default defineComponent({
   overflow: hidden;
 }
 
-.anime-info-popup:hover {
+.product-info-popup:hover {
   transform: scale(1.3);
   box-shadow: 0 0 20px 5px #0000001a;
 }
 
-.anime-info-popup .info-container {
+.product-info-popup .info-container {
   padding: 5px !important;
 }
 
-.anime-info-popup .info-name {
+.product-info-popup .info-name {
   font-size: small !important;
   color: #5a5d60;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
 }
 
-.anime-info-popup .info-name:hover {
+.product-info-popup .info-name:hover {
   color: #33a0cb !important;
 }
 
-.anime-info-popup .info-container div {
+.product-info-popup .info-container div {
   color: #5a5d60 !important;
   font-weight: 300;
   font-size: xx-small;
 }
 
-.anime-info-popup .info-container .info-item-description {
+.product-info-popup .info-container .info-item-description {
   width: 100%;
   text-align: start;
   -webkit-line-clamp: 5;
@@ -285,38 +300,24 @@ export default defineComponent({
   -webkit-box-orient: vertical;
 }
 
-.anime-info-popup .info-container .info-category {
+.product-info-popup .info-container .info-popup-product {
   text-overflow: ellipsis;
 }
 
-.anime-info-popup .info-container .info-item-category {
+.product-info-popup .info-container .info-item-popup {
   background-color: #a3e5ff7c;
-  border-radius: 4px;
-}
-
-.anime-info-popup .info-container .info-item-score {
-  color: #33a0cb !important;
-}
-
-.anime-info-popup .info-container .info-item-year::before,
-.anime-info-popup .info-container .info-item-update::before {
-  display: inline-block;
-  content: "";
-  margin: 0px 4px;
-  height: 0.45rem !important;
-  width: 1px !important;
-  background: #387c96;
+  border-radius: 3px;
 }
 
 /* responsive <=992px */
 @media only screen and (max-width: 992px) {
-  .anime-info-popup .info-container .info-item-description {
+  .product-info-popup .info-container .info-item-description {
     -webkit-line-clamp: 4;
     line-height: 15px;
     height: 60px;
   }
 
-  .anime-info-popup .info-container {
+  .product-info-popup .info-container {
     color: #5a5d60 !important;
     font-weight: 100;
     font-size: 1px;

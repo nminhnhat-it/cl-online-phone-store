@@ -276,6 +276,15 @@ const routes = [
       requiresAuth: false
     }
   },
+  {
+    path: "/:slug",
+    name: "landing.brands",
+    component: () => import("@/views/landing.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: false
+    }
+  },
 ]
 
 const router = createRouter({

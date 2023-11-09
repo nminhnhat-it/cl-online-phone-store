@@ -126,7 +126,7 @@ export default {
               </div>
               <div class="position-relative mb-3">
                 <label for="comfirm_password" class="form-label form-float-label">Comfirm Password (8+ characters)</label>
-                <field name="comfirm_password" type="comfirm_password" class="form-control form-control-secondary" id="comfirm_password" />
+                <field name="comfirm_password" type="password" class="form-control form-control-secondary" id="comfirm_password" />
                 <ErrorMessage name="comfirm_password" class="form-error-span" />
               </div>
               <div class="position-relative mb-3">

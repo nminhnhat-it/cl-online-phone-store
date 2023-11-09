@@ -5,7 +5,20 @@ import brandService from "@/services/brand.service";
 
 export default {
   data() {
+    const FormSchema = yup.object().shape({
+      br_title: yup
+        .string()
+        .required("Title cannot be blank.")
+        .max(255, "Title maximum 255 characters."),
+      br_desc: yup
+        .string()
+        .max(255, "Descriptions maximum 255 characters."),
+      brandImage: yup
+        .mixed()
+        .required("Brand image cannot be blank.")
+    });
     return {
+      FormSchema,
       data: {}
     }
   },
@@ -17,7 +30,6 @@ export default {
   methods: {
     async submitForm() {
       this.$store.state.data = this.data;
-      this.data = {};
       this.$emit("add:item");
     },
 
@@ -31,18 +43,21 @@ export default {
 
 <template>
   <div class="upload-form-ctn mt-3">
-    <Form @submit="submitForm">
+    <Form @submit="submitForm" :validation-schema="FormSchema">
       <div class="position-relative mb-3">
         <label for="br_title" class="form-label">Brand Title</label>
         <Field v-model="this.data.br_title" name="br_title" type="text" class="form-control form-control-secondary" id="br_title" />
+        <ErrorMessage name="br_title" class="form-error-span" />
       </div>
       <div class="position-relative mb-3">
         <label for="br_desc" class="form-label">Brand Descriptions</label>
         <Field v-model="this.data.br_desc" name="br_desc" type="text" class="form-control form-control-secondary" id="br_desc" />
+        <ErrorMessage name="br_desc" class="form-error-span" />
       </div>
       <div class="position-relative mb-3">
         <label for="brandImage" class="form-label">Image</label>
         <Field @change="getImages" tabindex="-1" multiple name="brandImage" type="file" class="form-control form-control-secondary" id="brandImage" accept="image/*" />
+        <ErrorMessage name="brandImage" class="form-error-span" />
       </div>
       <button type="submit" class="btn btn-6bc3e7">Submit</button>
       <router-link :to="{ name: 'admin.category.brands' }">

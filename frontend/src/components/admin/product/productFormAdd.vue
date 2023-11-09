@@ -8,7 +8,49 @@ export default {
     route: { type: Array, default: [] },
   },
   data() {
+    const FormSchema1 = yup.object().shape({
+      pd_title: yup
+        .string()
+        .required("Title cannot be blank.")
+        .max(255, "Title maximum 255 characters."),
+      pd_desc: yup
+        .string()
+        .max(255, "Descriptions maximum 255 characters."),
+      sr_id: yup
+        .string()
+        .required("Serie cannot be blank."),
+      productImages: yup
+        .mixed()
+        .required("Images cannot be blank."),
+      pi_camera: yup
+        .string()
+        .max(255, "Camera info maximum 255 characters."),
+      pi_battery: yup
+        .string()
+        .max(255, "Battery info maximum 255 characters."),
+      pi_chipset: yup
+        .string()
+        .max(255, "Chipset info maximum 255 characters."),
+    });
+
+    const FormSchema2 = yup.object().shape({
+      pv_title: yup
+        .string()
+        .required("Title cannot be blank.")
+        .max(255, "Title maximum 255 characters."),
+      pv_price: yup
+        .number()
+        .required("Number cannot be blank."),
+      pv_quantity: yup
+        .number()
+        .required("Title cannot be blank."),
+      productVerionImage: yup
+        .mixed()
+        .required("Images cannot be blank."),
+    });
     return {
+      FormSchema1,
+      FormSchema2,
       screenSizes: [5.4, 6.1, 6.7],
       rams: [2, 4, 6, 8, 12, 16],
       mems: [16, 32, 64, 128, 256, 512, 1024],
@@ -38,25 +80,14 @@ export default {
   },
   methods: {
 
+    displayNextForm() {
+      this.$router.push({ name: 'admin.product.add.version' });
+    },
+
     async submitForm() {
       this.$store.state.data = this.data;
       this.$store.state.images = this.images;
       this.$store.state.colorImg = this.colorImg[0];
-
-      this.data = {
-        sr_id: "",
-
-        pi_screen: "",
-        pi_camera: "",
-        pi_battery: "",
-        pi_mem: "",
-        pi_ram: "",
-        pi_chipset: "",
-
-        pv_title: "",
-        pv_price: "",
-        pv_quantity: 1,
-      }
       this.images = []
       this.colorImg = []
 
@@ -76,72 +107,81 @@ export default {
 </script>
 
 <template>
-  <Form @submit="submitForm">
-
-    <div class="row">
-      <div v-if="!this.route[3]" class="upload-form-ctn">
-        <hr>
-        <h5>Product Infomations</h5>
-        <div class="position-relative mb-3">
-          <label for="pd_title" class="form-label">Title</label>
-          <Field v-model="this.data.pd_title" name="pd_title" type="text" class="form-control form-control-secondary" id="pd_title" />
-        </div>
-        <div class="position-relative mb-3">
-          <label for="pd_desc" class="form-label">Descriptions</label>
-          <Field v-model="this.data.pd_desc" name="pd_desc" type="text" class="form-control form-control-secondary" id="pd_desc" />
-        </div>
-        <div class="category-chose mb-3">
-          <label for="sr_id" class="form-label">Serie</label>
-          <select v-model="this.data.sr_id" name="sr_id" id="sr_id" class="form-select form-control form-control-secondary">
-            <option disabled value="">Choose Serie</option>
-            <option v-for="serie in this.$store.state.series" :value="serie._id">{{ serie.sr_title }}</option>
-          </select>
-        </div>
-        <div class="position-relative mb-3">
-          <label for="productImages" class="form-label">Images</label>
-          <Field @change="getImages" tabindex="-1" multiple name="productImages" type="file" class="form-control form-control-secondary" id="productImages" accept="image/*" />
-        </div>
-        <div class="position-relative mb-3">
-          <label for="pi_camera" class="form-label">Camera Info</label>
-          <Field v-model="this.data.pi_camera" name="pi_camera" type="text" class="form-control form-control-secondary" id="pi_camera" />
-        </div>
-        <div class="position-relative mb-3">
-          <label for="pi_battery" class="form-label">Battery Info</label>
-          <Field v-model="this.data.pi_battery" name="pi_battery" type="text" class="form-control form-control-secondary" id="pi_battery" />
-        </div>
-        <div class="category-chose mb-3">
-          <label for="pi_screen" class="form-label">Screen Size</label>
-          <select v-model="this.data.pi_screen" name="pi_screen" id="pi_screen" class="form-select form-control form-control-secondary">
-            <option disabled value="">Choose Screen Size</option>
-            <option v-for="size in this.screenSizes" :value="size">{{ size }} inch</option>
-          </select>
-        </div>
-        <div class="category-chose mb-3">
-          <label for="pi_mem" class="form-label">Memory Info</label>
-          <select v-model="this.data.pi_mem" name="pi_mem" id="pi_mem" class="form-select form-control form-control-secondary">
-            <option disabled value="">Choose Memory</option>
-            <option v-for="mem in this.mems" :value="mem">{{ mem }} GB</option>
-          </select>
-        </div>
-        <div class="category-chose mb-3">
-          <label for="pi_ram" class="form-label">Ram Memory</label>
-          <select v-model="this.data.pi_ram" name="pi_ram" id="pi_ram" class="form-select form-control form-control-secondary">
-            <option disabled value="">Choose Ram Memory</option>
-            <option v-for="ram in this.rams" :value="ram">{{ ram }} GB</option>
-          </select>
-        </div>
-        <div class="position-relative mb-3">
-          <label for="pi_chipset" class="form-label">Chipset Info</label>
-          <Field v-model="this.data.pi_chipset" name="pi_chipset" type="text" class="form-control form-control-secondary" id="pi_chipset" />
-        </div>
-        <hr>
-        <div class="d-flex justify-content-end">
-          <router-link :to="{ name: 'admin.product.add.version' }">
-            <button @click="displayNextForm" class="btn btn-6bc3e7 ms-auto" style="width: 76px;">Next</button>
-          </router-link>
-        </div>
+  <Form @submit="displayNextForm" :validation-schema="FormSchema1">
+    <div v-if="!this.route[3]" class="upload-form-ctn">
+      <hr>
+      <h5>Product Infomations</h5>
+      <div class="position-relative mb-3">
+        <label for="pd_title" class="form-label">Title</label>
+        <Field v-model="this.data.pd_title" name="pd_title" type="text" class="form-control form-control-secondary" id="pd_title" />
+        <ErrorMessage name="pd_title" class="form-error-span" />
       </div>
+      <div class="position-relative mb-3">
+        <label for="pd_desc" class="form-label">Descriptions</label>
+        <Field v-model="this.data.pd_desc" name="pd_desc" type="text" class="form-control form-control-secondary" id="pd_desc" />
+        <ErrorMessage name="pd_desc" class="form-error-span" />
+      </div>
+      <div class="category-chose mb-3">
+        <label for="sr_id" class="form-label">Serie</label>
+        <Field as="select" v-model="this.data.sr_id" name="sr_id" id="sr_id" class="form-select form-control form-control-secondary">
+          <option disabled value="">Choose Serie</option>
+          <option v-for="serie in this.$store.state.series" :value="serie._id">{{ serie.sr_title }}</option>
+        </Field>
+        <ErrorMessage name="sr_id" class="form-error-span" />
+      </div>
+      <div class="position-relative mb-3">
+        <label for="productImages" class="form-label">Images</label>
+        <Field @change="getImages" tabindex="-1" multiple name="productImages" type="file" class="form-control form-control-secondary" id="productImages" accept="image/*" />
+        <ErrorMessage name="productImages" class="form-error-span" />
+      </div>
+      <div class="position-relative mb-3">
+        <label for="pi_camera" class="form-label">Camera Info</label>
+        <Field v-model="this.data.pi_camera" name="pi_camera" type="text" class="form-control form-control-secondary" id="pi_camera" />
+        <ErrorMessage name="pi_camera" class="form-error-span" />
+      </div>
+      <div class="position-relative mb-3">
+        <label for="pi_battery" class="form-label">Battery Info</label>
+        <Field v-model="this.data.pi_battery" name="pi_battery" type="text" class="form-control form-control-secondary" id="pi_battery" />
+        <ErrorMessage name="pi_battery" class="form-error-span" />
+      </div>
+      <div class="category-chose mb-3">
+        <label for="pi_screen" class="form-label">Screen Size</label>
+        <Field as="select" v-model="this.data.pi_screen" name="pi_screen" id="pi_screen" class="form-select form-control form-control-secondary">
+          <option disabled value="">Choose Screen Size</option>
+          <option v-for="size in this.screenSizes" :value="size">{{ size }} inch</option>
+        </Field>
+        <ErrorMessage name="pi_screen" class="form-error-span" />
+      </div>
+      <div class="category-chose mb-3">
+        <label for="pi_mem" class="form-label">Memory Info</label>
+        <Field as="select" v-model="this.data.pi_mem" name="pi_mem" id="pi_mem" class="form-select form-control form-control-secondary">
+          <option disabled value="">Choose Memory</option>
+          <option v-for="mem in this.mems" :value="mem">{{ mem }} GB</option>
+        </Field>
+        <ErrorMessage name="pi_mem" class="form-error-span" />
+      </div>
+      <div class="category-chose mb-3">
+        <label for="pi_ram" class="form-label">Ram Memory</label>
+        <Field as="select" v-model="this.data.pi_ram" name="pi_ram" id="pi_ram" class="form-select form-control form-control-secondary">
+          <option disabled value="">Choose Ram Memory</option>
+          <option v-for="ram in this.rams" :value="ram">{{ ram }} GB</option>
+        </Field>
+        <ErrorMessage name="pi_ram" class="form-error-span" />
+      </div>
+      <div class="position-relative mb-3">
+        <label for="pi_chipset" class="form-label">Chipset Info</label>
+        <Field v-model="this.data.pi_chipset" name="pi_chipset" type="text" class="form-control form-control-secondary" id="pi_chipset" />
+        <ErrorMessage name="pi_chipset" class="form-error-span" />
+      </div>
+      <hr>
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-6bc3e7 ms-auto" style="width: 76px;">Next</button>
+      </div>
+    </div>
+  </Form>
 
+  <Form @submit="submitForm" :validation-schema="FormSchema2">
+    <div class="row">
       <div v-if="this.route[3] == 'version'">
         <div class="upload-form-ctn">
           <hr>
@@ -149,21 +189,25 @@ export default {
           <div class="position-relative mb-3">
             <label for="pv_title" class="form-label">Title</label>
             <Field v-model="this.data.pv_title" name="pv_title" type="text" class="form-control form-control-secondary" id="pv_title" />
+            <ErrorMessage name="pv_title" class="form-error-span" />
           </div>
           <div class="position-relative mb-3">
             <label for="pv_price" class="form-label">Prices</label>
             <Field v-model="this.data.pv_price" name="pv_price" type="text" class="form-control form-control-secondary" id="pv_price" />
+            <ErrorMessage name="pv_price" class="form-error-span" />
           </div>
           <div class="category-chose mb-3">
-            <label for="br_id" class="form-label">Quantity</label>
-            <select v-model="this.data.pv_quantity" name="sr_id" id="sr_id" class="form-select form-control form-control-secondary">
+            <label for="pv_quantity" class="form-label">Quantity</label>
+            <Field as="select" v-model="this.data.pv_quantity" name="pv_quantity" id="pv_quantity" class="form-select form-control form-control-secondary">
               <option disabled value="">Choose Quantity</option>
               <option v-for="n in 100" :value="n">{{ n }}</option>
-            </select>
+            </Field>
+            <ErrorMessage name="pv_quantity" class="form-error-span" />
           </div>
           <div class="position-relative mb-3">
             <label for="productVerionImage" class="form-label">Image</label>
             <Field @change="getColorImg" tabindex="-1" name="productVerionImage" multiple type="file" class="form-control form-control-secondary" id="productVerionImage" accept="image/*" />
+            <ErrorMessage name="productVerionImage" class="form-error-span" />
           </div>
         </div>
         <hr>

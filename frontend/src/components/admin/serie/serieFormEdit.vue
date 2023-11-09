@@ -11,7 +11,17 @@ export default {
     ErrorMessage,
   },
   data() {
+    const FormSchema = yup.object().shape({
+      sr_title: yup
+        .string()
+        .required("Title cannot be blank.")
+        .max(255, "Title maximum 255 characters."),
+      br_id: yup
+        .string()
+        .required("Brand cannot be blank.")
+    });
     return {
+      FormSchema,
       data: {},
       brandSelected: ''
     }
@@ -39,17 +49,19 @@ export default {
 <template>
   <div class="upload-form-ctn mt-3">
     <hr>
-    <Form @submit="submitForm">
+    <Form @submit="submitForm" :validation-schema="FormSchema">
       <div class="position-relative mb-3">
-        <label for="br_title" class="form-label">Serie Title</label>
-        <Field v-model="this.data.sr_title" name="br_title" type="text" class="form-control form-control-secondary" id="br_title" />
+        <label for="sr_title" class="form-label">Serie Title</label>
+        <Field v-model="this.data.sr_title" name="sr_title" type="text" class="form-control form-control-secondary" id="sr_title" />
+        <ErrorMessage name="sr_title" class="form-error-span" />
       </div>
       <div class="category-chose mb-3">
-        <label for="brand" class="form-label">Brand</label>
-        <select v-model="this.brandSelected" name="br_id" id="br_id" class="form-select form-control form-control-secondary">
+        <label for="br_id" class="form-label">Brand</label>
+        <Field as="select" v-model="this.brandSelected" name="br_id" id="br_id" class="form-select form-control form-control-secondary">
           <option disabled value="">Choose Brand</option>
           <option v-for="brand in this.$store.state.brands" :value="brand._id">{{ brand.br_title }}</option>
-        </select>
+        </Field>
+        <ErrorMessage name="br_id" class="form-error-span" />
       </div>
       <hr>
       <button type="submit" class="btn btn-6bc3e7">Submit</button>

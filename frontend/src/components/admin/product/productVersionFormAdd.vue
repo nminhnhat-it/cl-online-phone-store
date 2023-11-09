@@ -8,8 +8,24 @@ export default {
     route: { type: Array, default: [] },
   },
   data() {
+    const FormSchema = yup.object().shape({
+      pv_title: yup
+        .string()
+        .required("Title cannot be blank.")
+        .max(255, "Title maximum 255 characters."),
+      pv_price: yup
+        .number()
+        .required("Number cannot be blank."),
+      pv_quantity: yup
+        .number()
+        .required("Title cannot be blank."),
+      productVerionImage: yup
+        .mixed()
+        .required("Images cannot be blank."),
+    });
     return {
-      data:{
+      FormSchema,
+      data: {
         pv_title: "",
         pv_price: "",
         pv_quantity: 1,
@@ -44,7 +60,7 @@ export default {
 </script>
 
 <template>
-  <Form @submit="submitForm">
+  <Form @submit="submitForm" :validation-schema="FormSchema">
     <div class="row">
       <div>
         <div class="upload-form-ctn">
@@ -53,21 +69,25 @@ export default {
           <div class="position-relative mb-3">
             <label for="pv_title" class="form-label">Title</label>
             <Field v-model="this.data.pv_title" name="pv_title" type="text" class="form-control form-control-secondary" id="pv_title" />
+            <ErrorMessage name="pv_title" class="form-error-span" />
           </div>
           <div class="position-relative mb-3">
             <label for="pv_price" class="form-label">Prices</label>
             <Field v-model="this.data.pv_price" name="pv_price" type="text" class="form-control form-control-secondary" id="pv_price" />
+            <ErrorMessage name="pv_price" class="form-error-span" />
           </div>
           <div class="category-chose mb-3">
-            <label for="br_id" class="form-label">Quantity</label>
-            <select v-model="this.data.pv_quantity" name="sr_id" id="sr_id" class="form-select form-control form-control-secondary">
+            <label for="pv_quantity" class="form-label">Quantity</label>
+            <Field as="select" v-model="this.data.pv_quantity" name="pv_quantity" id="pv_quantity" class="form-select form-control form-control-secondary">
               <option disabled value="">Choose Quantity</option>
               <option v-for="n in 100" :value="n">{{ n }}</option>
-            </select>
+            </Field>
+            <ErrorMessage name="pv_quantity" class="form-error-span" />
           </div>
           <div class="position-relative mb-3">
             <label for="productVerionImage" class="form-label">Image</label>
             <Field @change="getImages" tabindex="-1" name="productVerionImage" multiple type="file" class="form-control form-control-secondary" id="productVerionImage" accept="image/*" />
+            <ErrorMessage name="productVerionImage" class="form-error-span" />
           </div>
         </div>
         <hr>

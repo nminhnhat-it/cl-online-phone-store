@@ -54,8 +54,8 @@ export default {
           <div class="focus-img-character" :style="{ backgroundImage: `url(${this.$store.state.apiUrl + product.pd_focusImg})` }"></div>
           <div class="focus-decs-wrapper">
             <div class="focus-item-logo" :style="{ backgroundImage: `url(${this.$store.state.apiUrl + product.brand.br_img})` }"></div>
-            <div class="focus-item-name text-black fs-4 d-flex">iPhone 15</div>
-            <div class="focus-item-desc text-black">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius animi neque molestias delectus, magnam quas unde ab vel in blanditiis ipsa, eos veritatis excepturi nemo iste ut autem praesentium accusamus.</div>
+            <div class="focus-item-name text-black fs-4 d-flex">{{ product.pd_title }}</div>
+            <div class="focus-item-desc text-black">{{ product.pd_desc }}.</div>
           </div>
         </a>
       </div>

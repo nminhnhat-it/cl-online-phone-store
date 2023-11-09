@@ -84,7 +84,7 @@ export default {
 
       <tr class="data-tb-row">
         <td class="data-tb-col">{{ data.pd_title }}</td>
-        <td class="data-tb-col">{{ data.pd_desc }}</td>
+        <td class="data-tb-col" style="text-overflow: ellipsis; max-width: 200px;">{{ data.pd_desc }}</td>
         <td class="data-tb-col">{{ data.pd_slug }}</td>
         <td class="data-tb-col">{{ data.productInfo.pi_screen }}</td>
         <td class="data-tb-col">{{ data.productInfo.pi_camera }}</td>
@@ -111,10 +111,10 @@ export default {
     <table class="data-tb">
       <tr class="data-tb-row">
         <th v-if="data.pd_focusImg" class="data-tb-col" style="min-width: 102px;">
-          <img :src="this.$store.state.apiUrl + data.pd_focusImg" alt="" style=" max-width: 300px;">
+          <img :src="this.$store.state.apiUrl + data.pd_focusImg" alt="" style=" max-width: 200px; max-height: 130px;">
         </th>
         <th v-if="data.pd_focusImgBg" class="data-tb-col" style="min-width: 102px;">
-          <img :src="this.$store.state.apiUrl + data.pd_focusImgBg" alt="" style=" max-width: 300px;">
+          <img :src="this.$store.state.apiUrl + data.pd_focusImgBg" alt="" style=" max-width: 200px; max-height: 130px;">
         </th>
 
         <td class="data-tb-col modify" style="text-align: center;">
@@ -133,7 +133,7 @@ export default {
     <table v-if="data" class="data-tb">
       <tr class="data-tb-row">
         <th v-for="image in data.productImages" class="data-tb-col" style="min-width: 102px;">
-          <img :src="this.$store.state.apiUrl + image.im_path" alt="" style=" max-width: 300px;">
+          <img :src="this.$store.state.apiUrl + image.im_path" alt="" style=" max-width: 200px; max-height: 130px;">
         </th>
         <td @click="addImage" class="data-tb-col modify" style="text-align: center;">
           <a><i class="fa-solid fa-plus fa-2xl"></i></a>
@@ -167,7 +167,7 @@ export default {
         <td class="data-tb-col">{{ productVersion.pv_price }}</td>
         <td class="data-tb-col">{{ productVersion.pv_quantity }}</td>
         <td class="data-tb-col">
-          <img :src="this.$store.state.apiUrl + productVersion.pv_img" alt="" style="max-width: 300px;">
+          <img :src="this.$store.state.apiUrl + productVersion.pv_img" alt="" style=" max-width: 200px; max-height: 130px;">
         </td>
         <td class="data-tb-col modify">
           <a @click="editVersion" :id="productVersion._id">Edit</a>

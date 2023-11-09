@@ -1,4 +1,7 @@
 <script>
+import accountService from "@/services/account.service";
+import brandService from "@/services/brand.service";
+import serieService from "@/services/serie.service";
 import productService from "@/services/product.service";
 
 import navbar from "@/components/navbar.vue";
@@ -10,9 +13,7 @@ import RowSlider from "@/components/landing/RowSlider.vue";
 
 export default {
   props: {
-    user: { type: Object, default: {} },
-    isStaff: { type: Object, default: {} },
-    products: { type: Array }
+    slug: { type: String, default: "" },
   },
   components: {
     navbar,
@@ -22,7 +23,28 @@ export default {
     FocusWrapper,
     RowSlider,
   },
+  data() {
+    return {
+      brands: [],
+      series: [],
+      products: [],
+    }
+  },
   computed: {
+
+    getBrands() {
+      return this.brands;
+    },
+
+    getSeries() {
+      if (this.slug == "") {
+        return this.series;
+      }
+      else {
+        var series = this.series.filter(serie => serie.br_slug == this.slug)
+        return series;
+      }
+    },
 
     getProducts() {
       return this.products;
@@ -35,23 +57,40 @@ export default {
   },
   methods: {
 
-    retrieveUser() {
-      this.$store.state.user = this.user;
-      this.$store.state.isStaff = this.isStaff;
+    async retrieveUser() {
+      var user = await accountService.get();
+      var isStaff = await accountService.verifyPermission();
+      this.$store.state.user = user;
+      this.$store.state.isStaff = isStaff;
+    },
+
+    async retrieveBrands() {
+      this.brands = await brandService.getAll();
+    },
+
+    async retrieveSeries() {
+      this.series = await serieService.getAll();
+    },
+
+    async retrieveProducts() {
+      this.products = await productService.getAll();
     },
   },
   mounted() {
     this.retrieveUser();
+    this.retrieveBrands();
+    this.retrieveSeries();
+    this.retrieveProducts();
   }
 }
 </script>
  
 <template>
-  <navbar />
+  <navbar :brands="getBrands" />
   <div class="content">
 
     <FocusWrapper :focusProducts="getFocusProducts" />
-    <!-- <RowSlider /> -->
+    <RowSlider :series="getSeries" :products="getProducts" />
 
     <footerInfo />
     <backToTopBtn />
