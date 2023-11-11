@@ -24,33 +24,35 @@ export default {
 
 <template>
   <hr>
-  <table v-if="dataArr[0]" class="data-tb mt-3">
-    <tr class="data-tb-row">
-      <th class="data-tb-col">#</th>
-      <th class="data-tb-col" style="min-width: 102px;">Title</th>
-      <th class="data-tb-col" style="min-width: 102px;">Slug</th>
-      <th class="data-tb-col" style="min-width: 102px;">Brand</th>
+  <div style="overflow-x: scroll;">
+    <table v-if="dataArr[0]" class="data-tb mt-3">
+      <tr class="data-tb-row">
+        <th class="data-tb-col">#</th>
+        <th class="data-tb-col" style="min-width: 102px;">Title</th>
+        <th class="data-tb-col" style="min-width: 102px;">Slug</th>
+        <th class="data-tb-col" style="min-width: 102px;">Brand</th>
 
-      <th class="data-tb-col" style="min-width: 102px;">Date Created</th>
-      <th class="data-tb-col" style="min-width: 102px;">Date Upadted</th>
-      <th class="data-tb-col" style="min-width: 102px;">Edit</th>
-    </tr>
+        <th class="data-tb-col" style="min-width: 102px;">Date Created</th>
+        <th class="data-tb-col" style="min-width: 102px;">Date Upadted</th>
+        <th class="data-tb-col" style="min-width: 102px;">Edit</th>
+      </tr>
 
-    <tr v-for="(data, key) in this.dataArr" class="data-tb-row">
-      <td class="data-tb-col">{{ key + 1 }}</td>
-      <td class="data-tb-col">{{ data.sr_title }}</td>
-      <td class="data-tb-col">{{ data.sr_slug }}</td>
-      <td class="data-tb-col">{{ data.br_title }}</td>
+      <tr v-for="(data, key) in this.dataArr" class="data-tb-row">
+        <td class="data-tb-col">{{ key + 1 }}</td>
+        <td class="data-tb-col">{{ data.sr_title }}</td>
+        <td class="data-tb-col">{{ data.sr_slug }}</td>
+        <td class="data-tb-col">{{ data.br_title }}</td>
 
-      <td class="data-tb-col">{{ data.createdAt }}</td>
-      <td class="data-tb-col">{{ data.updatedAt }}</td>
+        <td class="data-tb-col">{{ data.createdAt }}</td>
+        <td class="data-tb-col">{{ data.updatedAt }}</td>
 
-      <td class="data-tb-col modify">
-        <a :slug="data.sr_slug" @click="editSerie">Edit</a>
-        <a :id="data._id" @click="deleteSerie">Delete</a>
-      </td>
-    </tr>
-  </table>
+        <td class="data-tb-col modify">
+          <a :slug="data.sr_slug" @click="editSerie">Edit</a>
+          <a :id="data._id" @click="deleteSerie">Delete</a>
+        </td>
+      </tr>
+    </table>
+  </div>
 </template>
 
 <style scoped>
@@ -61,7 +63,6 @@ export default {
 .data-tb,
 .data-tb .data-tb-col {
   border: 1px solid #5a5d60;
-  text-align: center !important;
 }
 
 .data-tb .data-tb-col {

@@ -62,11 +62,11 @@ export default {
 </script>
 
 <template>
-  <div>
-    <hr>
-    <router-link :to="{ name: 'admin.product.all' }">
-      <button class="btn btn-6bc3e7 ms-auto" style="width: 76px;">Back</button>
-    </router-link>
+  <hr>
+  <router-link :to="{ name: 'admin.product.all' }">
+    <button class="btn btn-6bc3e7 ms-auto" style="width: 76px;">Back</button>
+  </router-link>
+  <div style="overflow-x: scroll;">
     <table v-if="data" class="data-tb mt-3">
       <tr class="data-tb-row">
         <th class="data-tb-col" style="min-width: 102px;">Title</th>
@@ -105,20 +105,20 @@ export default {
     </table>
   </div>
 
-  <div v-if="data.pd_isFocusProduct">
-    <hr>
+  <hr>
+  <div v-if="data.pd_isFocusProduct" style="overflow-x: scroll;">
     <h5 class="mt-3">Focus Images</h5>
     <table class="data-tb">
       <tr class="data-tb-row">
         <th v-if="data.pd_focusImg" class="data-tb-col" style="min-width: 102px;">
-          <img :src="this.$store.state.apiUrl + data.pd_focusImg" alt="" style=" max-width: 200px; max-height: 130px;">
+          <img :src="this.$store.state.apiUrl + data.pd_focusImg" alt="" style=" width: 5rem; height: 5rem;">
         </th>
         <th v-if="data.pd_focusImgBg" class="data-tb-col" style="min-width: 102px;">
-          <img :src="this.$store.state.apiUrl + data.pd_focusImgBg" alt="" style=" max-width: 200px; max-height: 130px;">
+          <img :src="this.$store.state.apiUrl + data.pd_focusImgBg" alt="" style=" width: 5rem; height: 5rem; object-fit: contain;">
         </th>
 
         <td class="data-tb-col modify" style="text-align: center;">
-          <router-link :to="{name: 'admin.product.info.focus'}">
+          <router-link :to="{ name: 'admin.product.info.focus' }">
             <a>Change</a>
           </router-link>
         </td>
@@ -127,13 +127,13 @@ export default {
     </table>
   </div>
 
-  <div>
-    <hr>
+  <hr>
+  <div style="overflow-x: scroll;">
     <h5 class="mt-3">Images</h5>
     <table v-if="data" class="data-tb">
       <tr class="data-tb-row">
         <th v-for="image in data.productImages" class="data-tb-col" style="min-width: 102px;">
-          <img :src="this.$store.state.apiUrl + image.im_path" alt="" style=" max-width: 200px; max-height: 130px;">
+          <img :src="this.$store.state.apiUrl + image.im_path" alt="" style=" width: 5rem; height: 5rem; object-fit: contain;">
         </th>
         <td @click="addImage" class="data-tb-col modify" style="text-align: center;">
           <a><i class="fa-solid fa-plus fa-2xl"></i></a>
@@ -164,7 +164,7 @@ export default {
 
       <tr v-for="productVersion in data.productVersions" class="data-tb-row">
         <td class="data-tb-col">{{ productVersion.pv_title }}</td>
-        <td class="data-tb-col">{{ productVersion.pv_price }}</td>
+        <td class="data-tb-col text-danger">${{ productVersion.pv_price }}</td>
         <td class="data-tb-col">{{ productVersion.pv_quantity }}</td>
         <td class="data-tb-col">
           <img :src="this.$store.state.apiUrl + productVersion.pv_img" alt="" style=" max-width: 200px; max-height: 130px;">

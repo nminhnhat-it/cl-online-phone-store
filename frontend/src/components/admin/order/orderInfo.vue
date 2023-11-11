@@ -82,32 +82,42 @@ export default {
         <button @click="displayNextForm" class="btn btn-6bc3e7" style="width: 76px;">Back</button>
       </router-link>
     </div>
-    <table v-if="data" class="data-tb mt-3">
-      <tr class="data-tb-row">
-        <th class="data-tb-col" style="min-width: 102px;">Customer Name</th>
-        <th class="data-tb-col" style="min-width: 102px;">Total</th>
-        <th class="data-tb-col" style="min-width: 102px;">Status</th>
-        <th class="data-tb-col" style="min-width: 102px;">Date Created</th>
-        <th class="data-tb-col" style="min-width: 102px;">Date Upadted</th>
-        <th v-if="data.od_status != 'cancel'" class="data-tb-col" style="min-width: 102px;">Edit</th>
-      </tr>
+    <div style="overflow-x: scroll;">
 
-      <tr v-if="this.data.customer" class="data-tb-row">
-        <td class="data-tb-col">{{ data.customer.name }}</td>
-        <td class="data-tb-col">{{ data.od_total }}</td>
-        <td class="data-tb-col text-primary">{{ data.od_status }}</td>
-        <td class="data-tb-col">{{ data.createdAt }}</td>
-        <td class="data-tb-col">{{ data.updatedAt }}</td>
-        <td v-if="data.od_status != 'cancel' && data.od_status != 'complete'" class="data-tb-col modify">
+      <table v-if="data" class="data-tb mt-3">
+        <tr class="data-tb-row">
+          <th class="data-tb-col" style="min-width: 102px;">Name</th>
+          <th class="data-tb-col" style="min-width: 102px;">Email</th>
+          <th class="data-tb-col" style="min-width: 102px;">Phone</th>
+          <th class="data-tb-col" style="min-width: 102px;">Address</th>
+          <th class="data-tb-col text-center" style="min-width: 102px;">Total</th>
+          <th class="data-tb-col" style="min-width: 102px;">Date Created</th>
+          <th class="data-tb-col" style="min-width: 102px;">Date Upadted</th>
+          <th class="data-tb-col" style="min-width: 102px;">Edit</th>
+          <th v-if="data.od_status != 'cancel'" class="data-tb-col" style="min-width: 102px;">Edit</th>
+        </tr>
 
-          <a v-if="data.od_status == 'await'" :id="data._id" @click="approveOrder">Approve</a>
-          <a v-if="data.od_status == 'prepare'" :id="data._id" @click="shipOrder">Ship</a>
-          <a v-if="data.od_status == 'ship'" :id="data._id" @click="completeOrder">Complete</a>
+        <tr v-if="this.data.customer" class="data-tb-row">
+          <td class="data-tb-col">{{ data.od_name }}</td>
+          <td class="data-tb-col">{{ data.od_email }}</td>
+          <td class="data-tb-col">0{{ data.od_phone }}</td>
+          <td class="data-tb-col" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ data.od_address }}</td>
+          <td class="data-tb-col text-center text-danger">${{ data.od_total }}</td>
+          <td class="data-tb-col">{{ data.createdAt }}</td>
+          <td class="data-tb-col">{{ data.updatedAt }}</td>
+          <td class="data-tb-col">{{ data.updatedAt }}</td>
+          <td v-if="data.od_status != 'cancel' && data.od_status != 'complete'" class="data-tb-col modify">
 
-          <a :id="data._id" @click="cancelOrder">Cancel</a>
-        </td>
-      </tr>
-    </table>
+            <a v-if="data.od_status == 'await'" :id="data._id" @click="approveOrder">Approve</a>
+            <a v-if="data.od_status == 'prepare'" :id="data._id" @click="shipOrder">Ship</a>
+            <a v-if="data.od_status == 'ship'" :id="data._id" @click="completeOrder">Complete</a>
+
+            <a :id="data._id" @click="cancelOrder">Cancel</a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
     <hr>
     <h5>Products</h5>
     <table v-if="data.cartInfos" class="data-tb mt-3">
@@ -122,10 +132,10 @@ export default {
       <tr v-for="(cartInfo, index) in data.cartInfos" v-if="this.data.cartInfos" class="data-tb-row">
         <td class="data-tb-col">{{ index + 1 }}</td>
         <td v-if="cartInfo.product" class="data-tb-col">{{ cartInfo.product.pd_title }}</td>
-        <td v-if="cartInfo.productVersion" class="data-tb-col">{{ cartInfo.productVersion.pv_price }}</td>
-        <td v-if="cartInfo.productVersion" class="data-tb-col">{{ cartInfo.ci_quantity }}</td>
+        <td v-if="cartInfo.productVersion" class="data-tb-col text-danger">{{ cartInfo.productVersion.pv_price }}</td>
+        <td v-if="cartInfo.productVersion" class="data-tb-col">${{ cartInfo.ci_quantity }}</td>
         <td v-if="cartInfo.productVersion" class="data-tb-col">
-          <img :src="this.$store.state.apiUrl + cartInfo.productVersion.pv_img" alt="" style="max-width: 300px;">
+          <img :src="this.$store.state.apiUrl + cartInfo.productVersion.pv_img" alt="" style="width: 5rem; height: 5rem;">
         </td>
       </tr>
     </table>

@@ -20,7 +20,8 @@ import productInfo from "@/components/admin/product/productInfo.vue";
 
 export default {
   props: {
-    id: { type: String }
+    id: { type: String },
+    slug: { type: String }
   },
   components: {
     navbar,
@@ -67,7 +68,7 @@ export default {
   <orderComplete :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'completes'" :id="this.id" />
   <orderCancel :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'cancels'" :id="this.id" />
 
-  <brand :route="getRoute" v-if="getRoute[1] == 'category' && getRoute[2] == 'brands'" />
+  <brand :slug="slug" :route="getRoute" v-if="getRoute[1] == 'category' && getRoute[2] == 'brands'" />
   <serie :route="getRoute" v-if="getRoute[1] == 'category' && getRoute[2] == 'series'" />
 
   <product :route="getRoute" v-if="getRoute[1] == 'product' && getRoute[2] == 'all'" />

@@ -34,10 +34,13 @@ export default {
     },
     async retrieveData() {
       this.data = await serieService.get(this.$store.state.slug);
-      var brand = this.$store.state.brands.filter((brand, index) => brand._id == this.data.br_id);
-      this.brandSelected = brand[0]._id;
       if (!this.data)
         this.$router.push({ name: "admin.category.series" });
+      if (this.$store.state.brands) {
+        var brand = this.$store.state.brands.filter((brand, index) => brand._id == this.data.br_id);
+        if (brand[0])
+          this.brandSelected = brand[0]._id;
+      }
     },
   },
   mounted() {

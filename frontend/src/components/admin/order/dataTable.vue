@@ -36,34 +36,42 @@ export default {
 </script>
 
 <template>
-  <table v-if="dataArr[0]" class="data-tb mt-3">
-    <tr class="data-tb-row">
-      <th class="data-tb-col">#</th>
-      <th class="data-tb-col" style="min-width: 102px;">Customer Name</th>
-      <th class="data-tb-col" style="min-width: 102px;">Total</th>
-      <th class="data-tb-col" style="min-width: 102px;">Date Created</th>
-      <th class="data-tb-col" style="min-width: 102px;">Date Upadted</th>
-      <th class="data-tb-col" style="min-width: 102px;">Edit</th>
-    </tr>
+  <div style="overflow-x: scroll;">
+    <table v-if="dataArr[0]" class="data-tb mt-3">
+      <tr class="data-tb-row">
+        <th class="data-tb-col">#</th>
+        <th class="data-tb-col" style="min-width: 102px;">Name</th>
+        <th class="data-tb-col" style="min-width: 102px;">Email</th>
+        <th class="data-tb-col" style="min-width: 102px;">Phone</th>
+        <th class="data-tb-col" style="min-width: 102px;">Address</th>
+        <th class="data-tb-col text-center" style="min-width: 102px;">Total</th>
+        <th class="data-tb-col" style="min-width: 102px;">Date Created</th>
+        <th class="data-tb-col" style="min-width: 102px;">Date Upadted</th>
+        <th class="data-tb-col" style="min-width: 102px;">Edit</th>
+      </tr>
 
-    <tr v-for="(data, key) in this.dataArr" class="data-tb-row">
-      <td class="data-tb-col">{{ key + 1 }}</td>
-      <td class="data-tb-col">{{ data.customer.name }}</td>
-      <td class="data-tb-col">{{ data.od_total }}</td>
-      <td class="data-tb-col">{{ data.createdAt }}</td>
-      <td class="data-tb-col">{{ data.updatedAt }}</td>
-      <td class="data-tb-col modify">
+      <tr v-for="(data, key) in this.dataArr" class="data-tb-row">
+        <td class="data-tb-col">{{ key + 1 }}</td>
+        <td class="data-tb-col">{{ data.od_name }}</td>
+        <td class="data-tb-col">{{ data.od_email }}</td>
+        <td class="data-tb-col">0{{ data.od_phone }}</td>
+        <td class="data-tb-col" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ data.od_address }}</td>
+        <td class="data-tb-col text-center text-danger">${{ data.od_total }}</td>
+        <td class="data-tb-col">{{ data.createdAt }}</td>
+        <td class="data-tb-col">{{ data.updatedAt }}</td>
+        <td class="data-tb-col modify">
 
-        <a :id="data._id" @click="viewInfo">View Info</a>
+          <a :id="data._id" @click="viewInfo">View Info</a>
 
-        <a v-if="data.od_status == 'await'" :id="data._id" @click="approveOrder">Approve</a>
-        <a v-if="data.od_status == 'prepare'" :id="data._id" @click="shipOrder">Ship</a>
-        <a v-if="data.od_status == 'ship'" :id="data._id" @click="completeOrder">Complete</a>
+          <a v-if="data.od_status == 'await'" :id="data._id" @click="approveOrder">Approve</a>
+          <a v-if="data.od_status == 'prepare'" :id="data._id" @click="shipOrder">Ship</a>
+          <a v-if="data.od_status == 'ship'" :id="data._id" @click="completeOrder">Complete</a>
 
-        <a v-if="data.od_status != 'cancel' && data.od_status != 'complete'" :id="data._id" @click="cancelOrder">Cancel</a>
-      </td>
-    </tr>
-  </table>
+          <a v-if="data.od_status != 'cancel' && data.od_status != 'complete'" :id="data._id" @click="cancelOrder">Cancel</a>
+        </td>
+      </tr>
+    </table>
+  </div>
 </template>
 
 <style scoped>
@@ -74,7 +82,6 @@ export default {
 .data-tb,
 .data-tb .data-tb-col {
   border: 1px solid #5a5d60;
-  text-align: center !important;
 }
 
 .data-tb .data-tb-col {

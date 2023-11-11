@@ -4,6 +4,9 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 import brandService from "@/services/brand.service";
 
 export default {
+  props: {
+    slug: { type: String, default: "" },
+  },
   components: {
     Form,
     Field,
@@ -32,9 +35,8 @@ export default {
     },
 
     async retrieveData() {
-      this.data = await brandService.get(this.$store.state.slug);
-      if (!this.data)
-        this.$router.push({ name: "admin.category.brands" });
+      var brand = await brandService.get(this.slug);
+      this.data = brand
     },
 
     getImages(e) {

@@ -9,6 +9,7 @@ import brandFormEdit from "@/components/admin/brand/brandFormEdit.vue";
 export default {
   props: {
     route: { type: Array, default: [] },
+    slug:{ type: String },
   },
 
   components: {
@@ -102,7 +103,7 @@ export default {
     </div>
 
     <brandFormAdd v-if="this.route[3] == 'add'" @add:item="addBrand" />
-    <brandFormEdit v-if="this.route[3] == 'edit'" @update:item="updateBrand" />
+    <brandFormEdit :slug="slug" v-if="this.route[3] == 'edit'" @update:item="updateBrand" />
     <dataTable v-if="this.route[3] == null" :route="this.route" @delete:item="deleteBrand" :dataArr="getBrands" />
   </div>
 </template>

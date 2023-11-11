@@ -149,10 +149,16 @@ class ProductService {
   async deleteVersion(payload) {
     var id = payload.id;
     var productVersion = await productVersionModel.findById(id);
+    
     var fs = require('fs');
     var filePath = './' + productVersion.pv_img;
     fs.unlinkSync(filePath);
     await productVersionModel.findByIdAndDelete(id);
+    
+    var product = await productModel.findById(productVersion.pd_id)
+    var min = await this.calculatePrice(product._id);
+    product.pd_minPrice = min;
+    await product.save();
   }
 
   async deleteAll() {
@@ -204,6 +210,7 @@ class ProductService {
     await productImageModel.deleteMany({
       pd_id: id
     })
+
     var result = await productModel.findByIdAndDelete(id);
     return result;
   }
@@ -244,8 +251,9 @@ class ProductService {
 
     await productVersion.save();
 
-    if (product.pd_minPrice > productVersion.pv_price || product.pd_minPrice == 0)
-      product.pd_minPrice = productVersion.pv_price;
+    var min = await this.calculatePrice(product._id);
+    product.pd_minPrice = min;
+    await product.save();
   }
 
   async updateVersion(payload) {
@@ -262,8 +270,10 @@ class ProductService {
     productVersion.pv_quantity = payload.pv_quantity;
 
     await productVersion.save();
-    if (product.pd_minPrice > productVersion.pv_price || product.pd_minPrice == 0)
-      product.pd_minPrice = productVersion.pv_price;
+
+    var min = await this.calculatePrice(product._id);
+    product.pd_minPrice = min;
+    await product.save();
 
     if (payload.productImages[0]) {
       var fs = require('fs');
@@ -307,6 +317,19 @@ class ProductService {
 
     product.pd_isFocusProduct = payload.pd_isFocusProduct;
     await product.save();
+  }
+
+  async calculatePrice(id) {
+    var productVersions = await productVersionModel.find({
+      pd_id: id
+    })
+    var min = productVersions[0].pv_price;
+    for (const productVersion of productVersions) {
+      if (productVersion.pv_price < min)
+        min = productVersion.pv_price
+    }
+
+    return min;
   }
 }
 
