@@ -2,12 +2,14 @@
 import accountService from "@/services/account.service";
 import cartService from "@/services/cart.service";
 import brandService from "@/services/brand.service";
+import orderService from "@/services/order.service";
 
 import navbar from "@/components/navbar.vue";
 import backToTopBtn from "@/components/backToTopBtn.vue";
+import footerInfo from "@/components/footerInfo.vue";
 
-import CartInfoContainer from "@/components/cart/CartInfoContainer.vue";
-import OrderMessage from "@/components/cart/OrderMessage.vue";
+import UserInfo from "@/components/account/UserInfo.vue"
+import OrderHistory from "@/components/account/OrderHistory.vue"
 
 export default {
   props: {
@@ -16,22 +18,20 @@ export default {
   components: {
     navbar,
     backToTopBtn,
-    CartInfoContainer,
-    OrderMessage
+    footerInfo,
+
+    UserInfo,
+    OrderHistory
   },
   data() {
     return {
       cart: {},
       brands: [],
       user: {},
-      isOrderSuccess: false,
+      orders: [],
     }
   },
   computed: {
-
-    getUser() {
-      return this.user;
-    },
 
     getCart() {
       return this.cart;
@@ -44,12 +44,16 @@ export default {
     getBrands() {
       return this.brands;
     },
+
+    getUser() {
+      return this.user;
+    },
+
+    getOrders() {
+      return this.orders;
+    },
   },
   methods: {
-    alertOder() {
-      this.reloadCart()
-      this.isOrderSuccess = true;
-    },
 
     async retrieveUser() {
       var user = null;
@@ -73,13 +77,19 @@ export default {
       this.cart = cart;
     },
 
-    reloadCart() {
-      this.retrieveCart();
-    }
+    async retrieveOrders() {
+      var orders = await orderService.getAllByUserId();
+      this.orders = orders;
+    },
+
+    reloadOrders() {
+      this.retrieveOrders();
+    },
   },
   mounted() {
     this.retrieveUser();
     this.retrieveBrands();
+    this.retrieveOrders();
   }
 }
 </script>
@@ -88,9 +98,9 @@ export default {
   <navbar :cart="getCart" :route="getRoute" :brands="getBrands" />
   <div class="content">
 
-    <CartInfoContainer v-if="!isOrderSuccess" :cart="getCart" @reload:cart="reloadCart" @alert:order="alertOder" :user="getUser" :key="getUser" />
-    <OrderMessage v-if="isOrderSuccess" />
-
+    <UserInfo :user="getUser" />
+    <OrderHistory :orders="getOrders" @reload:order="reloadOrders"/>
+    <footerInfo />
     <backToTopBtn />
   </div>
 </template>

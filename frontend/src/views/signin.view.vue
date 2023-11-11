@@ -55,29 +55,29 @@ export default {
   <div class="container-fluid">
     <div class="row justify-content-end">
 
-      <div class="signin-container-left col p-3" :style="{ backgroundImage: `url( ${'/src/assets/login/images/gradienta-faXXUrNbH1c-unsplash.jpg'} )` }">
+      <div class="signin-container-left col p-3" :style="{ backgroundImage: `url( ${'/src/assets/images/gradienta-faXXUrNbH1c-unsplash.jpg'} )` }">
         <div id="carousel" class="carousel carousel-fade position-relative translate-middle-y top-50" data-bs-ride="carousel">
           <h2 class="text-secondary text-center mb-3">Wellcome !!</h2>
           <h3 class="text-secondary text-center mb-3">Sign in to your account</h3>
           <div class="carousel-inner rounded">
             <div class="carousel-item active" data-bs-interval="10000">
-              <img src="@/assets/login/images/smartphone-with-pumpkin-screen.jpg" class="d-block w-100" alt="...">
+              <img src="@/assets/images/smartphone-with-pumpkin-screen.jpg" class="d-block w-100" alt="...">
+              <div class="carousel-caption carousel-caption-secondary d-none d-md-block">
+                <h4>The best place to buy Phone.</h4>
+              </div>
+            </div>
+            <!-- <div class="carousel-item" data-bs-interval="10000">
+              <img src="@/assets/images/" class="d-block w-100" alt="...">
               <div class="carousel-caption carousel-caption-secondary d-none d-md-block">
                 <h4>The best place to buy Phone.</h4>
               </div>
             </div>
             <div class="carousel-item" data-bs-interval="10000">
-              <img src="@/assets/login/images/ab44954c581b1a66_8af2eb6daf6fa0eb_3486616579698801118684.jpg" class="d-block w-100" alt="...">
+              <img src="@/assets/images/" class="d-block w-100" alt="...">
               <div class="carousel-caption carousel-caption-secondary d-none d-md-block">
                 <h4>The best place to buy Phone.</h4>
               </div>
-            </div>
-            <div class="carousel-item" data-bs-interval="10000">
-              <img src="@/assets/login/images/bd8ca4efe3963ff5_67689fbbae9a20e2_10831716735199177118684.jpg" class="d-block w-100" alt="...">
-              <div class="carousel-caption carousel-caption-secondary d-none d-md-block">
-                <h4>The best place to buy Phone.</h4>
-              </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

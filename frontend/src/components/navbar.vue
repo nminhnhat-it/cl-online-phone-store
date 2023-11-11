@@ -106,14 +106,14 @@ export default defineComponent({
 </script>
 
 <template>
-  <nav :class="{ 'opaque': this.route[0] == 'admin' || this.route[0] == 'products' || this.route[0] == 'cart' }" class="navbar navbar-expand-md fixed-top bg-e8f3ee" style="padding-left: 2rem !important; padding-right: 2rem !important;">
+  <nav :class="{ 'opaque': this.route[0] == 'admin' || this.route[0] == 'products' || this.route[0] == 'cart'|| this.route[0] == 'account' }" class="navbar navbar-expand-md fixed-top bg-e8f3ee" style="padding-left: 2rem !important; padding-right: 2rem !important;">
     <div :class="{ 'm-0': this.route[0] == 'admin', 'mx-0': this.route[0] != 'admin' }" class="container-fluid p-0">
       <button class="navbar-toggler me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
         <span v-on:click="showOffcanvas" class="navbar-toggler-icon"></span>
       </button>
       <router-link :to="{ name: 'landing' }">
         <a :class="{ 'ms-3': this.route[0] == 'admin' }" class="navbar-brand m-0 me-3 p-0">
-          <img class="brand-logo" src="@/assets/user/images/n-tech-high-resolution-logo-transparent.png" alt="">
+          <img class="brand-logo" src="@/assets/images/logo-with-brand.png" alt="">
         </a>
       </router-link>
       <div v-if="this.route[0] != 'admin' && this.brands[0]" class="nav me-auto">
@@ -146,12 +146,12 @@ export default defineComponent({
           <button v-on:click="closeOffcanvas" type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#offcanvasNavbar" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body bg-e8f3ee">
-          <div v-on:mouseover="showDropDown" v-on:mouseleave="closeDropDown" class="user-side link-collapse nav-item dropdown-center me-3" v-bind:style="{ backgroundImage: `url( ${'/src/assets/user/images/3.png'})` }">
+          <div v-on:mouseover="showDropDown" v-on:mouseleave="closeDropDown" class="user-side link-collapse nav-item dropdown-center me-3" v-bind:style="{ backgroundImage: `url( ${'/src/assets/images/guest.png'})` }">
             <a class="nav-link dropdown-toggle" href="#" aria-expanded="false"></a>
             <div class="dropdown-menu p-0">
               <div class="card user-panel dropdown-container" style="width: 18rem;">
                 <div class="user-info p-3 m-0">
-                  <div class="user-img" v-bind:style="{ backgroundImage: `url( ${'/src/assets/user/images/3.png'})` }"></div>
+                  <div class="user-img" v-bind:style="{ backgroundImage: `url( ${'/src/assets/images/guest.png'})` }"></div>
                   <div class="d-flex align-items-center ms-2">
                     <span v-if="!isSignedIn" class="user-name">Guest</span>
                     <span v-if="isSignedIn" class="user-name">{{ this.$store.state.user.name }}</span>
@@ -159,12 +159,14 @@ export default defineComponent({
                 </div>
                 <ul class="card-body p-0 m-0">
                   <li v-if="this.$store.state.user">
-                    <a class="dropdown-item nav-link p-2 px-3" href="#">
-                      <div class="row">
-                        <div class="col-2"><i class="fa-solid fa-user"></i></div>
-                        <div class="col"><span class="">My account</span></div>
-                      </div>
-                    </a>
+                    <router-link :to="{name: 'account'}">
+                      <a class="dropdown-item nav-link p-2 px-3" href="#">
+                        <div class="row">
+                          <div class="col-2"><i class="fa-solid fa-user"></i></div>
+                          <div class="col"><span class="">My account</span></div>
+                        </div>
+                      </a>
+                    </router-link>
                   </li>
                   <li v-if="this.$store.state.isStaff && this.route[0] != 'admin'">
                     <router-link :to="{ name: 'admin.order.news' }">
@@ -209,7 +211,7 @@ export default defineComponent({
           </div>
           <div class="menu-user">
             <div class="user-info p-4 m-0 mb-2">
-              <div class="user-img" v-bind:style="{ backgroundImage: `url( ${'/src/assets/user/images/3.png'})` }"></div>
+              <div class="user-img" v-bind:style="{ backgroundImage: `url( ${'/src/assets/images/guest.png'})` }"></div>
               <div class="d-flex align-items-center ms-3">
                 <span class="user-name">Guest</span>
               </div>

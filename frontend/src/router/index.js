@@ -304,6 +304,16 @@ const routes = [
       requiresAuth: true
     }
   },
+
+  {
+    path: "/account",
+    name: "account",
+    component: () => import("@/views/account.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
+  },
 ]
 
 const router = createRouter({

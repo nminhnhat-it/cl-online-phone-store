@@ -44,6 +44,24 @@ class OrderService {
       return null;
     }
   }
+
+  async getAllByUserId() {
+    try {
+      var result = await this.api.get(`/customer`);
+      return result.data;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async cancelByUserId(id) {
+    try {
+      var result = await this.api.put(`/customer/${id}`);
+      return result.data;
+    } catch (error) {
+      return null;
+    }
+  }
 }
 
 export default new OrderService();

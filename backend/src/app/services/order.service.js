@@ -72,6 +72,49 @@ class OrderService {
     return orderArr;
   }
 
+  async getAllByUserId(payload) {
+    var carts = await cartModel.find({
+      ctm_id: payload.id,
+      c_isOrder: true
+    }).sort({ createdAt: -1 });
+
+    if (carts) {
+      var orderArr = [];
+      for (var cart of carts) {
+        var order = await orderModel.findOne({
+          c_id: cart._id,
+        });
+        if (order) {
+          var cartInfos = await cartInfoModel.find({
+            c_id: cart._id,
+          })
+
+          var cartInfoArr = [];
+          for (var cartInfo of cartInfos) {
+            var productVersion = await productVersionModel.findById(cartInfo.pv_id)
+            var product = await productModel.findById(productVersion.pd_id)
+            cartInfo = {
+              ...cartInfo._doc,
+              productVersion: productVersion,
+              product: product
+            }
+
+            cartInfoArr.push(cartInfo);
+          }
+
+          order = {
+            ...order._doc,
+            cart: cart,
+            cartInfos: cartInfoArr,
+          }
+
+          orderArr.push(order);
+        }
+      }
+    }
+    return orderArr;
+  }
+
   async get(payload) {
     var order = await orderModel.findById(payload.id);
     var cart = await cartModel.findById(order.c_id);
@@ -122,9 +165,39 @@ class OrderService {
         order.s_id = payload.s_id;
       order.od_status = payload.od_status;
 
+      if (order.od_status == 'cancel') {
+        var cart = await cartModel.findById(order.c_id);
+        var cartInfos = await cartInfoModel.find({
+          c_id: cart._id
+        })
+
+        for (const cartInfo of cartInfos) {
+          var productVersion = await productVersionModel.findById(cartInfo.pv_id);
+          productVersion.pv_quantity += cartInfo.ci_quantity;
+          productVersion.save();
+        }
+      }
+
       await order.save();
     }
     return order;
+  }
+
+  async cancelByUserId(payload) {
+    var order = await orderModel.findById(payload.od_id);
+    order.od_status = "cancel";
+
+    var cart = await cartModel.findById(order.c_id);
+    var cartInfos = await cartInfoModel.find({
+      c_id: cart._id
+    })
+
+    for (const cartInfo of cartInfos) {
+      var productVersion = await productVersionModel.findById(cartInfo.pv_id);
+      productVersion.pv_quantity += cartInfo.ci_quantity;
+      productVersion.save();
+    }
+    await order.save();
   }
 }
 

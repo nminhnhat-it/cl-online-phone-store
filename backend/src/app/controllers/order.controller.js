@@ -70,5 +70,28 @@ module.exports = {
       }
       return next(error);
     }
-  }
+  },
+
+  async getAllByUserId(req, res, next) {
+    var payload = res.payload;
+
+    try {
+      var orders = await service.getAllByUserId(payload);
+      return res.send(orders);
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  async cancelByUserId(req, res, next) {
+    var payload = res.payload;
+    payload.od_id = req.params.id;
+
+    try {
+      var orders = await service.cancelByUserId(payload);
+      return res.send("Cancel success");
+    } catch (error) {
+      return next(error);
+    }
+  },
 }
