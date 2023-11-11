@@ -115,8 +115,8 @@ export default defineComponent({
       <Carousel @vue:updated="calcCartSize" ref="product__slider" v-bind="settings" :breakpoints="breakpoints">
         <Slide v-for="(product, key) in getProductsOfSerie(serie)" :key="key">
           <div class="carousel__item">
-            <router-link :to="{ name: 'landing' }">
-              <div v-bind:slug="product.pd_slug" class="card" target='_blank' href="#">
+            <router-link :to="{ name: 'products', params: { slug: product.pd_slug } }">
+              <div v-bind:slug="product.pd_slug" class="card" target='_blank'>
                 <img @mouseenter="activeProductPopup" :src="this.$store.state.apiUrl + product.productVersions[0].pv_img" class="card-img-top" alt="...">
                 <div class="name-container p-1">
                   <p class="card-text m-0">{{ product.pd_title }}</p>
@@ -133,25 +133,27 @@ export default defineComponent({
     </div>
   </div>
 
-  <a v-if="isActive" @mouseleave="unActiveProductPopup" class="product-info-popup card" href="#" target="_blank" :style="styleObj">
-    <img :src="$store.state.apiUrl + popupProduct.productImages[0].im_path" class=" card-img-top" alt="...">
-    <div class='info-container card-body'>
-      <div class='info-name text-start mb-1'>{{ popupProduct.pd_title }}</div>
-      <div class='d-flex info-popup-product mb-2'>
-        <div class='info-item-popup me-1 px-1'>{{ popupProduct.productInfo.pi_screen }} inches</div>
-        <div class='info-item-popup me-1 px-1'>{{ popupProduct.productInfo.pi_ram }} GB</div>
-        <div class='info-item-popup me-1 px-1'>{{ popupProduct.productInfo.pi_mem }} GB</div>
+  <router-link v-if="isActive" :to="{ name: 'products', params: { slug: this.popupProduct.pd_slug } }">
+    <a @mouseleave="unActiveProductPopup" class="product-info-popup card" href="#" target="_blank" :style="styleObj">
+      <img :src="$store.state.apiUrl + popupProduct.productImages[0].im_path" class=" card-img-top" alt="...">
+      <div class='info-container card-body'>
+        <div class='info-name text-start mb-1'>{{ popupProduct.pd_title }}</div>
+        <div class='d-flex info-popup-product mb-2'>
+          <div class='info-item-popup me-1 px-1'>{{ popupProduct.productInfo.pi_screen }} inches</div>
+          <div class='info-item-popup me-1 px-1'>{{ popupProduct.productInfo.pi_ram }} GB</div>
+          <div class='info-item-popup me-1 px-1'>{{ popupProduct.productInfo.pi_mem }} GB</div>
+        </div>
+        <div class='d-flex text-black mb-1'><span class="me-1">Prices:</span> <span class="text-danger">${{ popupProduct.pd_minPrice }}</span></div>
+        <div class='info-item-description text-black'>{{ popupProduct.pd_desc }}.</div>
       </div>
-      <div class='d-flex text-black mb-1'>Prices: <span class="text-danger">${{ popupProduct.pd_minPrice }}</span></div>
-      <div class='info-item-description text-black'>{{ popupProduct.pd_desc }}.</div>
-    </div>
-  </a>
+    </a>
+  </router-link>
 </template>
 
 <style>
 .row-sliders-container .row-slider .carousel .carousel__viewport {
   padding-top: 10px;
-  padding-bottom: 20px;
+  padding-bottom: 30px;
 }
 
 .row-sliders-container .row-slider .carousel .carousel__next {
@@ -233,7 +235,7 @@ export default defineComponent({
   height: 280px;
   box-shadow: 0 0 7px 4px #0000001a;
   border-radius: 5px;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .row-sliders-container .row-slider .carousel .carousel__viewport .carousel__slide .carousel__item .card .card-text:hover {
@@ -250,6 +252,7 @@ export default defineComponent({
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  text-align: left;
 }
 
 .product-info-popup {
@@ -257,7 +260,7 @@ export default defineComponent({
   background-color: #ffffff;
   color: #8d989a !important;
   border-radius: 4px;
-  text-align: center;
+  text-align: left;
   text-decoration: none;
   overflow: hidden;
 }

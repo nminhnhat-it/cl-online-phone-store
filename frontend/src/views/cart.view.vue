@@ -2,15 +2,13 @@
 import accountService from "@/services/account.service";
 import cartService from "@/services/cart.service";
 import brandService from "@/services/brand.service";
-import serieService from "@/services/serie.service";
-import productService from "@/services/product.service";
 
 import navbar from "@/components/navbar.vue";
 import backToTopBtn from "@/components/backToTopBtn.vue";
 import footerInfo from "@/components/footerInfo.vue";
 
-import FocusWrapper from "@/components/landing/FocusWrapper.vue";
-import RowSlider from "@/components/landing/RowSlider.vue";
+import CartInfoContainer from "@/components/cart/CartInfoContainer.vue";
+import OrderMessage from "@/components/cart/OrderMessage.vue";
 
 export default {
   props: {
@@ -21,53 +19,47 @@ export default {
     backToTopBtn,
     footerInfo,
 
-    FocusWrapper,
-    RowSlider,
+    CartInfoContainer,
+    OrderMessage
   },
   data() {
     return {
       cart: {},
       brands: [],
-      series: [],
-      products: [],
+      user: {},
+      isOrderSuccess: false,
     }
   },
   computed: {
 
-    getBrands() {
-      return this.brands;
-    },
-
-    getSeries() {
-      if (this.slug == "") {
-        return this.series;
-      }
-      else {
-        var series = this.series.filter(serie => serie.br_slug == this.slug)
-        return series;
-      }
-    },
-
-    getProducts() {
-      return this.products;
+    getUser() {
+      return this.user;
     },
 
     getCart() {
       return this.cart;
     },
 
-    getFocusProducts() {
-      var focusProducts = this.products.filter(product => product.pd_isFocusProduct == true);
-      return focusProducts;
+    getRoute() {
+      return this.$route.name.split('.');
+    },
+
+    getBrands() {
+      return this.brands;
     },
   },
   methods: {
+    alertOder() {
+      this.reloadCart()
+      this.isOrderSuccess = true;
+    },
 
     async retrieveUser() {
       var user = null;
       var isStaff = null;
       if (document.cookie) {
         user = await accountService.get();
+        this.user = user;
         isStaff = await accountService.verifyPermission();
         if (user && !isStaff) this.retrieveCart();
       }
@@ -79,34 +71,28 @@ export default {
       this.brands = await brandService.getAll();
     },
 
-    async retrieveSeries() {
-      this.series = await serieService.getAll();
-    },
-
-    async retrieveProducts() {
-      this.products = await productService.getAll();
-    },
-
     async retrieveCart() {
       var cart = await cartService.getByUserid();
       this.cart = cart;
+    },
+
+    reloadCart() {
+      this.retrieveCart();
     }
   },
   mounted() {
     this.retrieveUser();
     this.retrieveBrands();
-    this.retrieveSeries();
-    this.retrieveProducts();
   }
 }
 </script>
  
 <template>
-  <navbar :cart="getCart" :brands="getBrands" />
+  <navbar :cart="getCart" :route="getRoute" :brands="getBrands" />
   <div class="content">
 
-    <FocusWrapper :focusProducts="getFocusProducts" />
-    <RowSlider :series="getSeries" :products="getProducts" :key="this.slug" />
+    <CartInfoContainer v-if="!isOrderSuccess" :cart="getCart" @reload:cart="reloadCart" @alert:order="alertOder" :user="getUser" :key="getUser" />
+    <OrderMessage v-if="isOrderSuccess" />
 
     <footerInfo />
     <backToTopBtn />
@@ -151,6 +137,7 @@ a {
 }
 
 .content {
+  padding-top: 3rem;
   max-width: 1808px;
   min-width: 300px;
   margin: auto;

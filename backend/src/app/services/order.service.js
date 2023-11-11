@@ -17,16 +17,37 @@ class OrderService {
       c_isOrder: false
     })
 
+    var cartInfos = await cartInfoModel.find({
+      c_id: cart._id
+    })
+
+    for (const cartInfo of cartInfos) {
+      var productVersion = await productVersionModel.findById(cartInfo.pv_id);
+
+      productVersion.pv_quantity -= cartInfo.ci_quantity
+      await productVersion.save();
+    }
+
     if (cart) {
       var od_total = cart.c_total - cart.c_reduce;
       var order = new orderModel({
         od_total: od_total,
         c_id: cart._id,
+        od_name: payload.name,
+        od_email: payload.email,
+        od_phone: payload.phone,
+        od_address: payload.address,
       })
+
       await order.save();
 
       cart.c_isOrder = true;
       await cart.save()
+
+      var newCart = new cartModel({
+        ctm_id: payload.id,
+      })
+      newCart.save();
     }
     return order;
   }

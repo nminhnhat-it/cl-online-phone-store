@@ -39,7 +39,7 @@ module.exports = {
       }
     } catch (error) {
       res.clearCookie('token');
-      return next(new apiError(403, "You need to login"));
+      return res.send(null);
     }
   },
 
@@ -48,7 +48,7 @@ module.exports = {
       var staff = await staffModel.findById(res.payload.id);
       if (staff)
         return next();
-      return next(new apiError(403, "Access forbiden"));
+      return res.send(null);
     } catch (error) {
       return next(error);
     }

@@ -16,13 +16,10 @@ export default {
         .max(255, "Title maximum 255 characters."),
       pd_desc: yup
         .string()
-        .max(255, "Descriptions maximum 255 characters."),
+        .max(1024, "Descriptions maximum 1024 characters."),
       sr_id: yup
         .string()
         .required("Serie cannot be blank."),
-      productImages: yup
-        .mixed()
-        .required("Images cannot be blank."),
       pi_camera: yup
         .string()
         .max(255, "Camera info maximum 255 characters."),

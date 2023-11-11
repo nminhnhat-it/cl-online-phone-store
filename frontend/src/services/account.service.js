@@ -8,7 +8,9 @@ class AccountService {
   async verifyPermission() {
     try {
       var result = await this.api.post("/verifyPermission");
-      return result.data;
+      if (result)
+        return result.data;
+      return null;
     } catch (error) {
       return null;
     }

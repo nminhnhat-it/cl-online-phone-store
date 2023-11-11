@@ -57,7 +57,7 @@ export default {
 </script>
 
 <template>
-  <navbar :route="getRoute" />
+  <navbar :route="getRoute" style="padding-left: 16px; padding-right: 16px;" />
   <optionBar :route="getRoute" />
 
   <orderInfo :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'info'" :id="this.id" />

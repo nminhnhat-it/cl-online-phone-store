@@ -10,6 +10,7 @@ export default defineComponent({
   props: {
     route: { type: Array, default: [] },
     brands: { type: Array, default: [] },
+    cart: {},
   },
   components: {
     // vue-carousel components
@@ -33,12 +34,22 @@ export default defineComponent({
         return true;
       return false;
     },
+
+    getCartQuantity() {
+      var quantity = 0;
+      for (const cartInfo of this.cart.cartInfos) {
+        quantity += cartInfo.ci_quantity;
+      }
+      this.$store.state.cartQuantity = quantity;
+      return quantity;
+    }
   },
   methods: {
 
     async signOut() {
       await accountService.logout();
       this.$store.state.user = null;
+      this.$store.state.isStaff = null;
     },
 
     showDropDown(e) {
@@ -84,19 +95,19 @@ export default defineComponent({
     }
   },
   async mounted() {
-    if (this.route[0] != 'admin')
+    if (this.route[0] != 'admin' && this.route[0] != 'products')
       window.addEventListener('scroll', this.scrolled);
   },
   unmounted() {
-    if (this.route[0] != 'admin')
+    if (this.route[0] != 'admin' && this.route[0] != 'products')
       window.removeEventListener('scroll', this.scrolled);
   }
 })
 </script>
 
 <template>
-  <nav :class="{ 'opaque': this.route[0] == 'admin' }" class="navbar navbar-expand-md fixed-top bg-e8f3ee p-0">
-    <div :class="{ 'm-0': this.route[0] == 'admin', 'mx-5': this.route[0] != 'admin' }" class="container-fluid p-0">
+  <nav :class="{ 'opaque': this.route[0] == 'admin' || this.route[0] == 'products' || this.route[0] == 'cart' }" class="navbar navbar-expand-md fixed-top bg-e8f3ee" style="padding-left: 2rem !important; padding-right: 2rem !important;">
+    <div :class="{ 'm-0': this.route[0] == 'admin', 'mx-0': this.route[0] != 'admin' }" class="container-fluid p-0">
       <button class="navbar-toggler me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
         <span v-on:click="showOffcanvas" class="navbar-toggler-icon"></span>
       </button>
@@ -121,7 +132,7 @@ export default defineComponent({
           <div class="nav-link dropdown-toggle px-0" aria-expanded="true"></div>
           <div class="dropdown-menu">
             <ul class="dropdown-container bg-e8f3ee">
-              <li v-for="                  brand                   in                     this.brands                    " class="dropdown-item p-0">
+              <li v-for=" brand in this.brands" class="dropdown-item p-0">
                 <router-link :to="{ name: `landing.brands`, params: { slug: `${brand.br_slug}` } }">
                   <a class="nav-link" aria-current="page">{{ brand.br_title }}</a>
                 </router-link>
@@ -155,7 +166,7 @@ export default defineComponent({
                       </div>
                     </a>
                   </li>
-                  <li v-if="this.$store.state.isStaff && this.route[0] != 'admin' && this.$store.state.user">
+                  <li v-if="this.$store.state.isStaff && this.route[0] != 'admin'">
                     <router-link :to="{ name: 'admin.order.news' }">
                       <a class="dropdown-item nav-link p-2 px-3" href="#">
                         <div class="row">
@@ -165,24 +176,32 @@ export default defineComponent({
                       </a>
                     </router-link>
                   </li>
-                  <li v-if="this.route[0] != 'admin' && this.$store.state.user">
-                    <a class="dropdown-item nav-link p-2 px-3" href="#">
-                      <div class="row">
-                        <div class="col-2"><i class="fa-solid fa-cart-shopping"></i></div>
-                        <div class="col"><span class="">Cart</span></div>
-                      </div>
-                    </a>
+                  <li v-if="this.route[0] != 'admin' && this.$store.state.user && this.cart.cartInfos">
+                    <router-link :to="{ name: 'cart' }">
+                      <a class="dropdown-item nav-link p-2 px-3">
+                        <div class="row" style="position: relative;">
+                          <div v-if="this.cart.cartInfos[0]" class="cart-item-number">{{ this.getCartQuantity }}</div>
+                          <div v-if="this.cart.cartInfos" :class="{ 'text-danger': this.cart.cartInfos[0] }" class="col-2"><i class="fa-solid fa-cart-shopping"></i></div>
+                          <div v-if="this.cart.cartInfos" class="col"><span>Cart</span></div>
+                        </div>
+                      </a>
+                    </router-link>
                   </li>
                   <li>
-                    <router-link :to="{ name: 'signin' }">
+                    <router-link v-if="!isSignedIn" :to="{ name: 'signin' }">
                       <a @click="signOut" class="dropdown-item nav-link p-2 px-3" href="#">
                         <div class="row">
                           <div class="col-2"><i class="fa-solid fa-right-from-bracket"></i></div>
                           <div v-if="!isSignedIn" class="col"><span class="">Sign In</span></div>
-                          <div v-if="isSignedIn" class="col"><span class="">Log Out</span></div>
                         </div>
                       </a>
                     </router-link>
+                    <a v-if="isSignedIn" @click="signOut" class="dropdown-item nav-link p-2 px-3" href="#">
+                      <div class="row">
+                        <div class="col-2"><i class="fa-solid fa-right-from-bracket"></i></div>
+                        <div v-if="isSignedIn" class="col"><span class="">Log Out</span></div>
+                      </div>
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -347,6 +366,26 @@ a {
 
 .navbar .nav .nav-item:nth-child(n+3) {
   display: none;
+}
+
+.cart-item-number {
+  text-align: center;
+  align-items: center;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  z-index: 100;
+  color: red;
+  padding: 6px;
+  border-radius: 50%;
+  background-color: #fff;
+  font-size: 60%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  border: 1px red solid;
+  margin-left: 24px;
+  top: -2px;
 }
 
 .navbar .nav .dropdown-center .dropdown-menu .dropdown-container .dropdown-item:nth-child(n-2) {

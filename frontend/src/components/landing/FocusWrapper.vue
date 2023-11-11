@@ -1,31 +1,27 @@
 <script>
+import router from '../../router';
+
 export default {
   props: {
     focusProducts: { type: Array, default: [] },
   },
   methods: {
-
     focusWrapperChange(e) {
       var focusWrapper = $(e.target);
-
       if (focusWrapper.hasClass("carousel-item-next")) {
         var direction = "left";
         var from = $(".active.carousel-item-start");
         var to = focusWrapper;
       }
-
       if (focusWrapper.hasClass("carousel-item-prev")) {
         var direction = "right";
         var from = $(".active.carousel-item-end");
         var to = focusWrapper;
       }
-
       from = from.find(".focus-img-character");
       to = to.find(".focus-img-character");
-
       var fromBgCss = from.css("background-image");
       var toBgCss = to.css("background-image");
-
       if (direction == "left") {
         to.attr("style", "animation: slide-right-in ; ; background-image: " + toBgCss);
         from.attr("style", "animation: slide-right-out ; background-image: " + fromBgCss);
@@ -36,6 +32,7 @@ export default {
       }
     },
   },
+  components: { router }
 }
 </script>
 
@@ -46,15 +43,23 @@ export default {
         <button v-for="(product, key) in this.focusProducts" :class="{ active: !key }" class="mx-0 ms-1" type="button" data-bs-target="#focus-carousel" :data-bs-slide-to="key" :aria-current="`${!key}`" :aria-label="`Slide ${key}`"></button>
       </div>
       <div class="carousel-inner">
-        <a v-for="(product, key) in this.focusProducts" v-on:transitionstart="focusWrapperChange" :class="{ active: key == 0 }" class="focus-item carousel-item">
-          <a class="focus-img-link" target='_blank'></a>
+        <a v-for="(product, key) in  this.focusProducts " v-on:transitionstart="focusWrapperChange" :class="{ active: key == 0 }" class="focus-item carousel-item">
+          <router-link :to="{ name: `products`, params: { slug: product.pd_slug } }">
+            <a class="focus-img-link" target='_blank'></a>
+          </router-link>
           <div class="vertical-layer"></div>
           <div class="horizontal-layer"></div>
           <img :src="`${this.$store.state.apiUrl + product.pd_focusImgBg}`" class="d-block focus-img" alt="...">
           <div class="focus-img-character" :style="{ backgroundImage: `url(${this.$store.state.apiUrl + product.pd_focusImg})` }"></div>
           <div class="focus-decs-wrapper">
             <div class="focus-item-logo" :style="{ backgroundImage: `url(${this.$store.state.apiUrl + product.brand.br_img})` }"></div>
-            <div class="focus-item-name text-black fs-4 d-flex">{{ product.pd_title }}</div>
+            <div class="focus-item-name text-black fs-4 d-flex mb-2">{{ product.pd_title }}</div>
+            <div class="d-flex focus-category mb-2">
+              <div class="focus-category-item me-2 mb-1 px-2 ">{{ product.productInfo.pi_screen }} inches</div>
+              <div class="focus-category-item me-2 mb-1 px-2 ">{{ product.productInfo.pi_ram }}GB</div>
+              <div class="focus-category-item me-2 mb-1 px-2 ">{{ product.productInfo.pi_mem }}GB</div>
+            </div>
+            <div class="focus-item-desc text-black">Prices <span class="text-danger">${{ product.pd_minPrice }}</span></div>
             <div class="focus-item-desc text-black">{{ product.pd_desc }}.</div>
           </div>
         </a>
@@ -148,6 +153,18 @@ export default {
   z-index: 3;
   bottom: auto !important;
   top: 35% !important;
+}
+
+.focus-wrapper .focus-decs-wrapper .focus-category {
+  flex-wrap: wrap;
+  overflow: hidden !important;
+  max-height: 2.6rem;
+}
+
+.focus-wrapper .focus-decs-wrapper .focus-category-item {
+  background-color: #a3e5ff7c;
+  border-radius: 4px;
+  font-size: 12px !important;
 }
 
 .focus-wrapper #focus-carousel .carousel-inner {

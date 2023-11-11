@@ -18,9 +18,6 @@ export default {
       pv_quantity: yup
         .number()
         .required("Title cannot be blank."),
-      productVerionImage: yup
-        .mixed()
-        .required("Images cannot be blank."),
     });
     return {
       FormSchema,
@@ -86,7 +83,8 @@ export default {
           <div class="category-chose mb-3">
             <label for="pv_quantity" class="form-label">Quantity</label>
             <Field as="select" v-model="this.data.pv_quantity" name="pv_quantity" id="pv_quantity" class="form-select form-control form-control-secondary">
-              <option disabled value="">Choose Quantity</option>
+              <option v-if="this.data.pv_quantity === ''" disabled value="">Choose Quantity</option>
+              <option v-if="this.data.pv_quantity === 0" disabled value="0">Choose Quantity</option>
               <option v-for="n in 100" :value="n">{{ n }}</option>
             </Field>
             <ErrorMessage name="pv_quantity" class="form-error-span" />

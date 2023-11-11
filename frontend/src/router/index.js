@@ -285,6 +285,25 @@ const routes = [
       requiresAuth: false
     }
   },
+  {
+    path: "/products/:slug",
+    name: "products",
+    component: () => import("@/views/product.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: false
+    }
+  },
+
+  {
+    path: "/cart",
+    name: "cart",
+    component: () => import("@/views/cart.view.vue"),
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
+  },
 ]
 
 const router = createRouter({

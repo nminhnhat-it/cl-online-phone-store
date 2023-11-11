@@ -15,10 +15,11 @@ router.route("/infos")
   .get(middlewares.verifyToken, cart.getByUserid)
   .delete(middlewares.verifyToken, cart.deleteByUserId)
   .post(middlewares.verifyToken, cart.addCartInfoByUserId)
-
-router.route("/infos/:id")
-  .delete(middlewares.verifyToken, cart.deleteCartInfoById)
   .put(middlewares.verifyToken, cart.updateCartInfoById)
+  
+  router.route("/infos/:id")
+  .delete(middlewares.verifyToken, cart.deleteCartInfoById)
+  .put(middlewares.verifyToken, cart.updateCartInfoByCartId)
 
 router.route("/:id")
   .get(middlewares.verifyToken, middlewares.verifyPermission, cart.get)

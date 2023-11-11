@@ -16,6 +16,7 @@ module.exports = {
 
   async get(req, res, next) {
     var payload = req.params;
+    
     try {
       var cart = await service.get(payload);
       if (cart)
@@ -146,10 +147,26 @@ module.exports = {
   async updateCartInfoById(req, res, next) {
     var payload = req.body;
     payload.id = res.payload.id;
-    payload.ci_id = req.params.id;
 
     try {
       var error = await service.updateCartInfoById(payload);
+      if (error) {
+        error = utils.parseValidateError(error);
+        return next(new apiError(422, error));
+      }
+      return res.send("Updated cart infomations");
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  async updateCartInfoByCartId(req, res, next) {
+    var payload = req.body;
+    payload.id = res.payload.id;
+    payload.ci_id = req.params.id;
+
+    try {
+      var error = await service.updateCartInfoByCartId(payload);
       if (error) {
         error = utils.parseValidateError(error);
         return next(new apiError(422, error));

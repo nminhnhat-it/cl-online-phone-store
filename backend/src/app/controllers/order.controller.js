@@ -6,7 +6,8 @@ const orderService = require("../services/order.service");
 module.exports = {
 
   async create(req, res, next) {
-    var payload = res.payload;
+    var payload = req.body;
+    payload.id = res.payload.id;
 
     try {
       var result = await service.create(payload);
@@ -59,8 +60,8 @@ module.exports = {
 
     try {
       var result = await service.update(payload);
-      if(!result)
-        return next(new apiError(404,"Error when update order infomations"));
+      if (!result)
+        return next(new apiError(404, "Error when update order infomations"));
       return res.send("Updated order infomations");
     } catch (error) {
       if (error.name == "ValidationError") {

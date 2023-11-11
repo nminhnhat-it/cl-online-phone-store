@@ -26,13 +26,6 @@ class AccountService {
       phone: payload.phone,
     });
 
-    var cart = await cartModel.findOne({
-      c_isOrder: false,
-    })
-    var carts = await cartModel.find();
-    if (cart && carts)
-      return null;
-
     var cart = new cartModel({
       ctm_id: customer._id,
     })

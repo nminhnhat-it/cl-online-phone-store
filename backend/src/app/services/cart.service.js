@@ -1,6 +1,7 @@
 const utils = require("../utils")
 const apiError = require("../utils/error.utils")
 const productVersionModel = require("../models/productVersion.model");
+const productModel = require("../models/product.model");
 const cartModel = require("../models/cart.model");
 const cartInfoModel = require("../models/cartInfo.model");
 
@@ -41,11 +42,11 @@ class CartService {
   }
 
   async create(payload) {
-    var cart = await cartModel.findOne({
+    var cartExit = await cartModel.findOne({
+      ctm_id: payload.id,
       c_isOrder: false,
     })
-    var carts = await cartModel.find();
-    if (cart && carts)
+    if (cartExit)
       return null;
 
     var cart = new cartModel({
@@ -87,13 +88,26 @@ class CartService {
     })
 
     if (cart) {
+      var cartInfoArr = [];
       var cartInfos = await cartInfoModel.find({
         c_id: cart._id,
       });
 
+      for (var cartInfo of cartInfos) {
+        var productVersion = await productVersionModel.findById(cartInfo.pv_id);
+        var product = await productModel.findById(productVersion.pd_id);
+
+        cartInfo = {
+          ...cartInfo._doc,
+          product: product,
+          productVersion: productVersion
+        }
+        cartInfoArr.push(cartInfo);
+      }
+
       cart = {
         ...cart._doc,
-        cartInfos: cartInfos
+        cartInfos: cartInfoArr
       }
     }
     return cart;
@@ -118,6 +132,7 @@ class CartService {
       c_isOrder: false
     })
 
+    
     if (cart) {
       var productVersion = await productVersionModel.findById(payload.pv_id);
       var ci_price = productVersion.pv_price * payload.ci_quantity;
@@ -128,8 +143,8 @@ class CartService {
         ci_quantity: payload.ci_quantity,
         ci_price: ci_price,
       });
-      await cartInfo.save();
 
+      await cartInfo.save();
       cart.c_total += ci_price;
       await cart.save();
     }
@@ -154,6 +169,26 @@ class CartService {
     var ci_price = productVersion.pv_price * payload.ci_quantity;
 
     var cartInfo = await cartInfoModel.findById(payload.ci_id);
+    cartInfo.ci_quantity += payload.ci_quantity;
+    cartInfo.ci_price += ci_price;
+
+    cartInfo.save();
+
+    var cart = await cartModel.findOne({
+      ctm_id: payload.id,
+      c_isOrder: false
+    })
+
+    cart.c_total += ci_price;
+    await cart.save();
+  }
+
+  async updateCartInfoByCartId(payload) {
+    var productVersion = await productVersionModel.findById(payload.pv_id);
+    var ci_price = productVersion.pv_price * payload.ci_quantity;
+
+    var cartInfo = await cartInfoModel.findById(payload.ci_id);
+
     var ci_pricebf = cartInfo.ci_price;
     cartInfo.ci_quantity = payload.ci_quantity;
     cartInfo.ci_price = ci_price;
