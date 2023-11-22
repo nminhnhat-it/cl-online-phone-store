@@ -20,8 +20,8 @@ import productInfo from "@/components/admin/product/productInfo.vue";
 
 export default {
   props: {
-    id: { type: String },
-    slug: { type: String }
+    id: { type: String, default: "" },
+    slug: { type: String, default: "" }
   },
   components: {
     navbar,
@@ -58,7 +58,7 @@ export default {
 </script>
 
 <template>
-  <navbar :route="getRoute" style="padding-left: 16px; padding-right: 16px;" />
+  <navbar :route="getRoute" />
   <optionBar :route="getRoute" />
 
   <orderInfo :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'info'" :id="this.id" />
@@ -69,10 +69,10 @@ export default {
   <orderCancel :route="getRoute" v-if="getRoute[1] == 'order' && getRoute[2] == 'cancels'" :id="this.id" />
 
   <brand :slug="slug" :route="getRoute" v-if="getRoute[1] == 'category' && getRoute[2] == 'brands'" />
-  <serie :route="getRoute" v-if="getRoute[1] == 'category' && getRoute[2] == 'series'" />
+  <serie :slug="slug" :route="getRoute" v-if="getRoute[1] == 'category' && getRoute[2] == 'series'" />
 
   <product :route="getRoute" v-if="getRoute[1] == 'product' && getRoute[2] == 'all'" />
-  <productInfo :route="getRoute" v-if="getRoute[1] == 'product' && (getRoute[2] == 'info' || getRoute[2] == 'version')" />
+  <productInfo :id="id" :slug="slug" :route="getRoute" v-if="getRoute[1] == 'product' && (getRoute[2] == 'info' || getRoute[2] == 'version')" />
   <productAdd :route="getRoute" v-if="getRoute[1] == 'product' && getRoute[2] == 'add'" />
 </template>
 

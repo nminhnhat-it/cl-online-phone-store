@@ -10,6 +10,7 @@ import serieFormEdit from "@/components/admin/serie/serieFormEdit.vue";
 export default {
   props: {
     route: { type: Array, default: [] },
+    slug: { type: String },
   },
 
   components: {
@@ -17,13 +18,13 @@ export default {
     serieFormAdd,
     serieFormEdit,
   },
-  
+
   computed: {
     getSeries() {
       return this.$store.state.series;
     },
   },
-  
+
   methods: {
 
     async retrieveSerieData() {
@@ -33,7 +34,7 @@ export default {
 
     async retrieveBrands() {
       var brands = await brandService.getAll();
-      this.$store.state.brands = brands
+      this.$store.state.brands = brands;
     },
 
     async deleteSerie() {
@@ -89,7 +90,7 @@ export default {
     </div>
 
     <serieFormAdd v-if="this.route[3] == 'add'" @add:item="addSerie" />
-    <serieFormEdit v-if="this.route[3] == 'edit'" @update:item="updateSerie" />
+    <serieFormEdit :slug="slug" v-if="this.route[3] == 'edit'" @update:item="updateSerie" />
     <dataTable v-if="this.route[3] == null" @delete:item="deleteSerie" :dataArr="getSeries" />
   </div>
 </template>

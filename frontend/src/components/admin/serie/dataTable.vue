@@ -8,8 +8,8 @@ export default {
   methods: {
 
     editSerie(e) {
-      this.$store.state.slug = $(e.target).attr("slug");
-      this.$router.push({ name: "admin.category.series.edit" });
+      var slug = $(e.target).attr("slug");
+      this.$router.push({ name: "admin.category.series.edit", params: { slug: slug } });
     },
 
     deleteSerie(e) {

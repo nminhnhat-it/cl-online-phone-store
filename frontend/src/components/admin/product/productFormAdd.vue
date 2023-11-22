@@ -71,6 +71,8 @@ export default {
       images: [],
       colorImg: [],
       currentVers: 1,
+      imageUrl: null,
+      colorImageUrl: null,
     }
   },
   components: {
@@ -96,11 +98,16 @@ export default {
 
     getImages(e) {
       this.images = e.target.files;
+      this.imageUrl = URL.createObjectURL(e.target.files[0]);
     },
 
     getColorImg(e) {
       this.colorImg = e.target.files;
+      this.colorImageUrl = URL.createObjectURL(e.target.files[0]);
     }
+  },
+  mounted() {
+    this.$store.state.images = "link";
   },
   emits: ["add:item"]
 }
@@ -129,10 +136,14 @@ export default {
         </Field>
         <ErrorMessage name="sr_id" class="form-error-span" />
       </div>
+      <div class="position-relative">
+        <label for="" class="form-label">Images</label>
+      </div>
       <div class="position-relative mb-3">
-        <label for="productImages" class="form-label">Images</label>
-        <Field @change="getImages" tabindex="-1" multiple name="productImages" type="file" class="form-control form-control-secondary" id="productImages" accept="image/*" />
+        <img class="me-3" v-if="this.images" :src="this.imageUrl" alt="" style="width: 6rem; height: 6rem; object-fit: contain;   border: 1px solid #5a5d60; padding: 1rem;">
+        <Field @change="getImages" tabindex="-1" multiple name="productImages" type="file" class="form-control form-control-secondary" id="productImages" accept="image/*" style="display:  none;" />
         <ErrorMessage name="productImages" class="form-error-span" />
+        <label for="productImages" class="form-label change-image-btn">Change</label>
       </div>
       <div class="position-relative mb-3">
         <label for="pi_camera" class="form-label">Camera Info</label>
@@ -204,10 +215,14 @@ export default {
             </Field>
             <ErrorMessage name="pv_quantity" class="form-error-span" />
           </div>
+          <div class="position-relative">
+            <label for="" class="form-label">Images</label>
+          </div>
           <div class="position-relative mb-3">
-            <label for="productVerionImage" class="form-label">Image</label>
-            <Field @change="getColorImg" tabindex="-1" name="productVerionImage" multiple type="file" class="form-control form-control-secondary" id="productVerionImage" accept="image/*" />
+            <img class="me-3" v-if="this.colorImg" :src="this.colorImageUrl" alt="" style="width: 6rem; height: 6rem; object-fit: contain;   border: 1px solid #5a5d60; padding: 1rem;">
+            <Field @change="getColorImg" tabindex="-1" multiple name="productVerionImage" type="file" class="form-control form-control-secondary" id="productVerionImage" accept="image/*" style="display:  none;" />
             <ErrorMessage name="productVerionImage" class="form-error-span" />
+            <label for="productVerionImage" class="form-label change-image-btn">Change</label>
           </div>
         </div>
         <hr>
@@ -223,6 +238,11 @@ export default {
 </template>
 
 <style scoped>
+.change-image-btn:hover {
+  color: #5fb8db;
+  cursor: pointer;
+}
+
 .form-error-span {
   color: red;
   font-size: 12px !important;

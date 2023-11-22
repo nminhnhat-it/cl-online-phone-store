@@ -13,8 +13,8 @@ export default {
   methods: {
 
     editProduct(e) {
-      this.$store.state.slug = $(e.target).attr("slug");
-      this.$router.push({ name: "admin.category.brands.edit" });
+      var slug = $(e.target).attr("slug");
+      this.$router.push({ name: "admin.product.info.edit", params: { slug: slug } });
     },
 
     deleteProduct(e) {
@@ -27,11 +27,13 @@ export default {
     },
 
     addImage(e) {
-      this.$router.push({ name: 'admin.product.info.img' });
+      this.$store.state.images = e.target.files;
+      this.$emit("add:image");
     },
 
     addVersion(e) {
-      this.$router.push({ name: 'admin.product.version.add' });
+      var slug = $(e.target).attr("slug");
+      this.$router.push({ name: 'admin.product.version.add', params: { slug: slug } });
     },
 
     deleteVersion(e) {
@@ -40,9 +42,9 @@ export default {
     },
 
     async editVersion(e) {
-      this.$store.state.id = $(e.target).attr("id");
-      this.$store.state.productVersion = await productService.getVersion(this.$store.state.id);
-      this.$router.push({ name: "admin.product.version.edit" });
+      var id = $(e.target).attr("id");
+      var slug = $(e.target).attr("slug");
+      this.$router.push({ name: "admin.product.version.edit", params: { id: id, slug: slug } });
     },
 
     async isFocusChange(e) {
@@ -54,10 +56,19 @@ export default {
 
       await productService.isFocusProduct(this.data._id, data);
       this.$emit("reload:info");
-    }
+    },
 
+    changeFocusImage(e) {
+      this.$store.state.image = e.target.files;
+      this.$emit("change:focusImage");
+    },
+
+    changeFocusImageBg(e) {
+      this.$store.state.focusImage = e.target.files;
+      this.$emit("change:focusImageBg");
+    }
   },
-  emits: ["delete:image", "delete:version", "reload:info"]
+  emits: ["delete:image", "delete:version", "reload:info", "change:focusImage", "change:focusImageBg", "add:image"]
 }
 </script>
 
@@ -79,7 +90,7 @@ export default {
         <th class="data-tb-col" style="min-width: 102px;">Ram Memory</th>
         <th class="data-tb-col" style="min-width: 102px;">Chipset</th>
         <th class="data-tb-col" style="min-width: 102px;">Focus Product</th>
-        <th class="data-tb-col" style="min-width: 102px;"></th>
+        <th class="data-tb-col" style="min-width: 102px;">Modify</th>
       </tr>
 
       <tr class="data-tb-row">
@@ -97,9 +108,7 @@ export default {
         </td>
 
         <td class="data-tb-col modify">
-          <router-link :to="{ name: 'admin.product.info.edit' }">
-            <a :slug="data.pd_slug">Edit</a>
-          </router-link>
+          <a @click="editProduct" :slug="data.pd_slug">Edit</a>
         </td>
       </tr>
     </table>
@@ -110,19 +119,32 @@ export default {
     <h5 class="mt-3">Focus Images</h5>
     <table class="data-tb">
       <tr class="data-tb-row">
-        <th v-if="data.pd_focusImg" class="data-tb-col" style="min-width: 102px;">
-          <img :src="this.$store.state.apiUrl + data.pd_focusImg" alt="" style=" width: 5rem; height: 5rem;">
+        <th class="data-tb-col" style="min-width: 102px;">
+          <div class="">Image</div>
         </th>
-        <th v-if="data.pd_focusImgBg" class="data-tb-col" style="min-width: 102px;">
-          <img :src="this.$store.state.apiUrl + data.pd_focusImgBg" alt="" style=" width: 5rem; height: 5rem; object-fit: contain;">
+        <th class="data-tb-col" style="min-width: 102px;">
+          <div class="">Background</div>
         </th>
-
-        <td class="data-tb-col modify" style="text-align: center;">
-          <router-link :to="{ name: 'admin.product.info.focus' }">
-            <a>Change</a>
-          </router-link>
+      </tr>
+      <tr class="data-tb-row">
+        <td class="data-tb-col" style="min-width: 102px;">
+          <img v-if="data.pd_focusImg" :src="this.$store.state.apiUrl + data.pd_focusImg" alt="" style=" width: 5rem; height: 5rem; object-fit: contain;">
+          <div v-if="!data.pd_focusImg" class="">None</div>
         </td>
-
+        <td class="data-tb-col" style="min-width: 102px;">
+          <img v-if="data.pd_focusImgBg" :src="this.$store.state.apiUrl + data.pd_focusImgBg" alt="" style=" width: 5rem; height: 5rem; object-fit: contain;">
+          <div v-if="!data.pd_focusImg" class="">None</div>
+        </td>
+      </tr>
+      <tr class="data-tb-row">
+        <td class="data-tb-col modify" style="min-width: 102px;">
+          <label for="focusImage">Change</label>
+          <input @change="changeFocusImage" id="focusImage" type="file" style="display: none;">
+        </td>
+        <td class="data-tb-col modify" style="min-width: 102px;">
+          <label for="focusImageBg">Change</label>
+          <input @change="changeFocusImageBg" id="focusImageBg" type="file" style="display: none;">
+        </td>
       </tr>
     </table>
   </div>
@@ -135,8 +157,9 @@ export default {
         <th v-for="image in data.productImages" class="data-tb-col" style="min-width: 102px;">
           <img :src="this.$store.state.apiUrl + image.im_path" alt="" style=" width: 5rem; height: 5rem; object-fit: contain;">
         </th>
-        <td @click="addImage" class="data-tb-col modify" style="text-align: center;">
-          <a><i class="fa-solid fa-plus fa-2xl"></i></a>
+        <td class="data-tb-col modify" style="text-align: center;">
+          <label for="addImage"><i class="fa-solid fa-plus fa-2xl"></i></label>
+          <input @change="addImage" multiple="true" id="addImage" type="file" style="display: none;">
         </td>
 
       </tr>
@@ -167,10 +190,10 @@ export default {
         <td class="data-tb-col text-danger">${{ productVersion.pv_price }}</td>
         <td class="data-tb-col">{{ productVersion.pv_quantity }}</td>
         <td class="data-tb-col">
-          <img :src="this.$store.state.apiUrl + productVersion.pv_img" alt="" style=" max-width: 200px; max-height: 130px;">
+          <img :src="this.$store.state.apiUrl + productVersion.pv_img" alt="" style=" width: 5rem; height: 5rem; object-fit: contain;">
         </td>
         <td class="data-tb-col modify">
-          <a @click="editVersion" :id="productVersion._id">Edit</a>
+          <a @click="editVersion" :id="productVersion._id" :slug="data.pd_slug">Edit</a>
           <a @click="deleteVersion" :id="productVersion._id">Delete</a>
         </td>
       </tr>
@@ -230,7 +253,17 @@ export default {
   color: #33a0cb;
 }
 
+.data-tb .data-tb-col.modify label {
+  cursor: pointer;
+  text-decoration: none;
+  color: #33a0cb;
+}
+
 .data-tb .data-tb-col.modify a:hover {
+  color: rgb(206, 97, 97);
+}
+
+.data-tb .data-tb-col.modify label:hover {
   color: rgb(206, 97, 97);
 }
 

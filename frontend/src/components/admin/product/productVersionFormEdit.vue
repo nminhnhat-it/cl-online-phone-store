@@ -1,10 +1,13 @@
 <script>
 import * as yup from "yup";
 import { Form, Field, ErrorMessage } from "vee-validate";
+import productService from "@/services/product.service";
 
 export default {
   props: {
     route: { type: Array, default: [] },
+    id: { type: String },
+    slug: { type: String }
   },
   data() {
     const FormSchema = yup.object().shape({
@@ -25,7 +28,9 @@ export default {
         pv_title: "",
         pv_price: "",
         pv_quantity: 1,
-      }
+      },
+      images: null,
+      imageUrl: null
     }
   },
   components: {
@@ -36,24 +41,25 @@ export default {
   methods: {
 
     async submitForm() {
-      this.data.id = this.$store.state.id;
+      this.data.id = this.id;
       this.$store.state.data = this.data;
       this.$store.state.images = this.images;
       this.$emit("update:item");
     },
 
-    setInfos() {
-      var productVersion = this.$store.state.productVersion;
-      if (productVersion)
-        this.data = {
-          pv_title: productVersion.pv_title,
-          pv_price: productVersion.pv_price,
-          pv_quantity: productVersion.pv_quantity,
-        }
+    async setInfos() {
+      var productVersion = await productService.getVersion(this.id);
+      this.data = {
+        pv_title: productVersion.pv_title,
+        pv_price: productVersion.pv_price,
+        pv_quantity: productVersion.pv_quantity,
+        pv_img: productVersion.pv_img
+      }
     },
 
     getImages(e) {
       this.images = e.target.files;
+      this.imageUrl = URL.createObjectURL(e.target.files[0]);
     },
   },
   mounted() {
@@ -89,16 +95,21 @@ export default {
             </Field>
             <ErrorMessage name="pv_quantity" class="form-error-span" />
           </div>
+          <div class="position-relative">
+            <label for="" class="form-label">Image</label>
+          </div>
           <div class="position-relative mb-3">
-            <label for="productVerionImage" class="form-label">Image</label>
-            <Field @change="getImages" tabindex="-1" name="productVerionImage" multiple type="file" class="form-control form-control-secondary" id="productVerionImage" accept="image/*" />
+            <img class="me-3" v-if="!this.images && data.pv_img" :src="this.$store.state.apiUrl + data.pv_img" alt="" style="width: 6rem; height: 6rem; object-fit: contain;   border: 1px solid #5a5d60; padding: 1rem;">
+            <img class="me-3" v-if="this.images" :src="this.imageUrl" alt="" style="width: 6rem; height: 6rem; object-fit: contain;   border: 1px solid #5a5d60; padding: 1rem;">
+            <Field @change="getImages" tabindex="-1" multiple name="productVerionImage" type="file" class="form-control form-control-secondary" id="productVerionImage" accept="image/*" style="display:  none;" />
             <ErrorMessage name="productVerionImage" class="form-error-span" />
+            <label for="productVerionImage" class="form-label change-image-btn">Change</label>
           </div>
         </div>
         <hr>
       </div>
       <div class="d-flex justify-content-end">
-        <router-link :to="{ name: 'admin.product.info' }">
+        <router-link :to="{ name: 'admin.product.info', params: { slug: slug } }">
           <button class="btn btn-danger ms-auto" style="width: 76px;">Back</button>
         </router-link>
         <button type="submit" class="btn btn-6bc3e7 ms-auto" style="width: 76px;">Submit</button>
@@ -108,6 +119,11 @@ export default {
 </template>
 
 <style scoped>
+.change-image-btn:hover {
+  color: #5fb8db;
+  cursor: pointer;
+}
+
 .form-error-span {
   color: red;
   font-size: 12px !important;

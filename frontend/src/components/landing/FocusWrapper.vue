@@ -5,6 +5,11 @@ export default {
   props: {
     focusProducts: { type: Array, default: [] },
   },
+  data() {
+    return {
+      interval: null
+    }
+  },
   methods: {
     focusWrapperChange(e) {
       var focusWrapper = $(e.target);
@@ -12,33 +17,58 @@ export default {
         var direction = "left";
         var from = $(".active.carousel-item-start");
         var to = focusWrapper;
+
+        from = from.find(".focus-img-character");
+        to = to.find(".focus-img-character");
+
+        var fromBgCss = from.css("background-image");
+        var toBgCss = to.css("background-image");
+
+        if (direction == "left") {
+          to.attr("style", "animation: slide-right-in ; ; background-image: " + toBgCss);
+          from.attr("style", "animation: slide-right-out ; background-image: " + fromBgCss);
+        }
+        else {
+          to.attr("style", "animation: slide-left-in ; background-image: " + toBgCss);
+          from.attr("style", "animation: slide-left-out ; background-image: " + fromBgCss);
+        }
       }
       if (focusWrapper.hasClass("carousel-item-prev")) {
         var direction = "right";
         var from = $(".active.carousel-item-end");
         var to = focusWrapper;
-      }
-      from = from.find(".focus-img-character");
-      to = to.find(".focus-img-character");
-      var fromBgCss = from.css("background-image");
-      var toBgCss = to.css("background-image");
-      if (direction == "left") {
-        to.attr("style", "animation: slide-right-in ; ; background-image: " + toBgCss);
-        from.attr("style", "animation: slide-right-out ; background-image: " + fromBgCss);
-      }
-      else {
-        to.attr("style", "animation: slide-left-in ; background-image: " + toBgCss);
-        from.attr("style", "animation: slide-left-out ; background-image: " + fromBgCss);
+
+        from = from.find(".focus-img-character");
+        to = to.find(".focus-img-character");
+
+        var fromBgCss = from.css("background-image");
+        var toBgCss = to.css("background-image");
+        if (direction == "left") {
+          to.attr("style", "animation: slide-right-in ; ; background-image: " + toBgCss);
+          from.attr("style", "animation: slide-right-out ; background-image: " + fromBgCss);
+        }
+        else {
+          to.attr("style", "animation: slide-left-in ; background-image: " + toBgCss);
+          from.attr("style", "animation: slide-left-out ; background-image: " + fromBgCss);
+        }
       }
     },
   },
-  components: { router }
+  components: { router },
+  mounted() {
+    this.interval = setInterval(function () {
+      $('#focus-carousel').carousel('next');
+    }, 8000);
+  },
+  unmounted() {
+    clearInterval(this.interval);
+  }
 }
 </script>
 
 <template>
   <div class="focus-wrapper m-0 p-0">
-    <div id="focus-carousel" class="carousel slide carousel-fade" data-bs-ride="true" data-bs-interval="6000">
+    <div id="focus-carousel" class="carousel slide carousel-fade">
       <div class="carousel-indicators px-5 mx-0">
         <button v-for="(product, key) in this.focusProducts" :class="{ active: !key }" class="mx-0 ms-1" type="button" data-bs-target="#focus-carousel" :data-bs-slide-to="key" :aria-current="`${!key}`" :aria-label="`Slide ${key}`"></button>
       </div>

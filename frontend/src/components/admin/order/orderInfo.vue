@@ -132,8 +132,8 @@ export default {
       <tr v-for="(cartInfo, index) in data.cartInfos" v-if="this.data.cartInfos" class="data-tb-row">
         <td class="data-tb-col">{{ index + 1 }}</td>
         <td v-if="cartInfo.product" class="data-tb-col">{{ cartInfo.product.pd_title }}</td>
-        <td v-if="cartInfo.productVersion" class="data-tb-col text-danger">{{ cartInfo.productVersion.pv_price }}</td>
-        <td v-if="cartInfo.productVersion" class="data-tb-col">${{ cartInfo.ci_quantity }}</td>
+        <td v-if="cartInfo.productVersion" class="data-tb-col text-danger">${{ cartInfo.productVersion.pv_price }}</td>
+        <td v-if="cartInfo.productVersion" class="data-tb-col">{{ cartInfo.ci_quantity }}</td>
         <td v-if="cartInfo.productVersion" class="data-tb-col">
           <img :src="this.$store.state.apiUrl + cartInfo.productVersion.pv_img" alt="" style="width: 5rem; height: 5rem;">
         </td>

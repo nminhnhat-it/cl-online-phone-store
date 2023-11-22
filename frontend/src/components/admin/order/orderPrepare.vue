@@ -84,7 +84,7 @@ export default {
   <div class="content">
     <div class="row mt-3" style="display: inline-flex;">
       <div class="col">
-        <h2 class="catefory-title">New Orders</h2>
+        <h2 class="catefory-title">Preparing Orders</h2>
       </div>
     </div>
 

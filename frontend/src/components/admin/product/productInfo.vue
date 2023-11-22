@@ -4,8 +4,6 @@ import serieService from "@/services/serie.service";
 
 import dataTable from "@/components/admin/product/dataTable.vue";
 import productFormEdit from "@/components/admin/product/productFormEdit.vue";
-import productImageFormAdd from "@/components/admin/product/productImageFormAdd.vue";
-import productFocusImageForm from "@/components/admin/product/productFocusImageForm.vue";
 import productInfoTable from "@/components/admin/product/productInfoTable.vue";
 import productVersionFormAdd from "@/components/admin/product/productVersionFormAdd.vue";
 import productVersionFormEdit from "@/components/admin/product/productVersionFormEdit.vue";
@@ -20,16 +18,16 @@ export default {
 
   props: {
     route: { type: Array, default: [] },
+    slug: { type: String, default: "" },
+    id: { type: String, default: "" },
   },
 
   components: {
     dataTable,
     productFormEdit,
     productInfoTable,
-    productImageFormAdd,
     productVersionFormAdd,
     productVersionFormEdit,
-    productFocusImageForm
   },
 
   computed: {
@@ -67,11 +65,8 @@ export default {
     },
 
     async getProductInfo() {
-      var slug = this.$store.state.slug;
-      if (!slug)
-        this.$router.push({ name: 'admin.product.all' })
-      else
-        return this.$store.state.productInfo = await productService.get(slug);
+      var slug = this.slug;
+      this.$store.state.productInfo = await productService.get(slug);
     },
 
     async deleteImage() {
@@ -118,19 +113,28 @@ export default {
           formdata.append('productImages', image, image.name);
         }
 
-      var res = await productService.addFocusImage(this.$store.state.productInfo._id,formdata);
+      var res = await productService.addFocusImage(this.$store.state.productInfo._id, formdata);
 
-      var formdata2 = new FormData();
+      if (res) {
+        this.getProductInfo();
+        alert("Change success");
+      }
+      else
+        alert("Can not add image");
+    },
+
+    async addFocusImageBg() {
+      var formdata = new FormData();
       if (this.$store.state.focusImage)
         for (const image1 of this.$store.state.focusImage) {
-          formdata2.append('productImages', image1, image1.name);
+          formdata.append('productImages', image1, image1.name);
         }
 
-      var res2 = await productService.addFocusImageBg(this.$store.state.productInfo._id,formdata2);
+      var res2 = await productService.addFocusImageBg(this.$store.state.productInfo._id, formdata);
 
-      if (res && res2) {
+      if (res2) {
         this.getProductInfo();
-        alert("Add success");
+        alert("Change success");
       }
       else
         alert("Can not add image");
@@ -189,12 +193,10 @@ export default {
       </div>
     </div>
 
-    <productImageFormAdd :route="route" v-if="this.route[3] == 'img'" @add:item="addImage" />
-    <productFocusImageForm :route="route" v-if="this.route[3] == 'focus'" @add:item="addFocusImage" />
-    <productInfoTable v-if="this.route[2] == 'info' && this.route[3] == null" :data="getProductInfos" @delete:image="deleteImage" @delete:version="deleteVersion" @reload:info="reloadInfo" />
-    <productFormEdit v-if="this.route[2] == 'info' && this.route[3] == 'edit'" @update:item="updateProductInfo" :productInfo="getProductInfos" />
-    <productVersionFormAdd :route="route" v-if="this.route[2] == 'version' && this.route[3] == 'add'" @add:item="addVersion" />
-    <productVersionFormEdit :route="route" v-if="this.route[2] == 'version' && this.route[3] == 'edit'" @update:item="updateVersion" />
+    <productInfoTable v-if="this.route[2] == 'info' && this.route[3] == null" :data="getProductInfos" @delete:image="deleteImage" @delete:version="deleteVersion" @reload:info="reloadInfo" @change:focusImage="addFocusImage" @change:focusImageBg="addFocusImageBg" @add:image="addImage" />
+    <productFormEdit :slug="slug" v-if="this.route[2] == 'info' && this.route[3] == 'edit'" @update:item="updateProductInfo" />
+    <productVersionFormAdd :slug="slug" :productInfo="getProductInfos" :route="route" v-if="this.route[2] == 'version' && this.route[3] == 'add'" @add:item="addVersion" />
+    <productVersionFormEdit :id="id" :slug="slug" :route="route" v-if="this.route[2] == 'version' && this.route[3] == 'edit'" @update:item="updateVersion" />
 
   </div>
 </template>

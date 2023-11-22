@@ -66,18 +66,6 @@ export default {
                 <h4>The best place to buy Phone.</h4>
               </div>
             </div>
-            <!-- <div class="carousel-item" data-bs-interval="10000">
-              <img src="@/assets/images/" class="d-block w-100" alt="...">
-              <div class="carousel-caption carousel-caption-secondary d-none d-md-block">
-                <h4>The best place to buy Phone.</h4>
-              </div>
-            </div>
-            <div class="carousel-item" data-bs-interval="10000">
-              <img src="@/assets/images/" class="d-block w-100" alt="...">
-              <div class="carousel-caption carousel-caption-secondary d-none d-md-block">
-                <h4>The best place to buy Phone.</h4>
-              </div>
-            </div> -->
           </div>
         </div>
       </div>
@@ -171,12 +159,6 @@ a {
 
   .signin-container-left {
     display: none;
-  }
-}
-
-@media only screen and (min-width: 1400px) {
-  .signin-container-right>.container {
-    width: 350px !important;
   }
 }
 

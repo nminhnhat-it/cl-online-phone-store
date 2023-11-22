@@ -5,6 +5,9 @@ import serieService from "@/services/serie.service";
 import brandService from "@/services/brand.service";
 
 export default {
+  props: {
+    slug: { type: String },
+  },
   components: {
     Form,
     Field,
@@ -27,20 +30,19 @@ export default {
     }
   },
   methods: {
+
     async submitForm() {
       this.data.br_id = this.brandSelected;
       this.$store.state.data = this.data;
       this.$emit("update:item");
     },
+
     async retrieveData() {
-      this.data = await serieService.get(this.$store.state.slug);
-      if (!this.data)
-        this.$router.push({ name: "admin.category.series" });
-      if (this.$store.state.brands) {
-        var brand = this.$store.state.brands.filter((brand, index) => brand._id == this.data.br_id);
-        if (brand[0])
-          this.brandSelected = brand[0]._id;
-      }
+      this.data = await serieService.get(this.slug);
+      var brands = await brandService.getAll();
+      var brand = brands.filter((brand, index) => brand._id == this.data.br_id);
+      if (brand[0])
+        this.brandSelected = brand[0]._id;
     },
   },
   mounted() {

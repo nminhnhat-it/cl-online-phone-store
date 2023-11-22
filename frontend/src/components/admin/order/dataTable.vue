@@ -45,9 +45,10 @@ export default {
         <th class="data-tb-col" style="min-width: 102px;">Phone</th>
         <th class="data-tb-col" style="min-width: 102px;">Address</th>
         <th class="data-tb-col text-center" style="min-width: 102px;">Total</th>
+        <th class="data-tb-col" style="min-width: 102px;">Staff</th>
         <th class="data-tb-col" style="min-width: 102px;">Date Created</th>
-        <th class="data-tb-col" style="min-width: 102px;">Date Upadted</th>
-        <th class="data-tb-col" style="min-width: 102px;">Edit</th>
+        <th class="data-tb-col" style="min-width: 102px;">Date Updated</th>
+        <th class="data-tb-col" style="min-width: 102px;">Modify</th>
       </tr>
 
       <tr v-for="(data, key) in this.dataArr" class="data-tb-row">
@@ -57,6 +58,8 @@ export default {
         <td class="data-tb-col">0{{ data.od_phone }}</td>
         <td class="data-tb-col" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ data.od_address }}</td>
         <td class="data-tb-col text-center text-danger">${{ data.od_total }}</td>
+        <td v-if="data.staff != null" class="data-tb-col">{{ data.staff.name }}</td>
+        <td v-if="data.staff == null" class="data-tb-col">{{ }}</td>
         <td class="data-tb-col">{{ data.createdAt }}</td>
         <td class="data-tb-col">{{ data.updatedAt }}</td>
         <td class="data-tb-col modify">

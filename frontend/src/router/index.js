@@ -54,7 +54,7 @@ const routes = [
     }
   },
   {
-    path: "/admin/category/brands/edit",
+    path: "/admin/category/brands/edit/:slug",
     name: "admin.category.brands.edit",
     component: () => import("@/views/admin.view.vue"),
     props: true,
@@ -85,7 +85,7 @@ const routes = [
     }
   },
   {
-    path: "/admin/category/series/edit",
+    path: "/admin/category/series/edit/:slug",
     name: "admin.category.series.edit",
     component: () => import("@/views/admin.view.vue"),
     props: true,
@@ -167,7 +167,7 @@ const routes = [
     }
   },
   {
-    path: "/admin/product/info",
+    path: "/admin/product/info/:slug",
     name: "admin.product.info",
     component: () => import("@/views/admin.view.vue"),
     props: true,
@@ -177,17 +177,7 @@ const routes = [
     }
   },
   {
-    path: "/admin/product/info/img",
-    name: "admin.product.info.img",
-    component: () => import("@/views/admin.view.vue"),
-    props: true,
-    meta: {
-      requiresAuth: true,
-      requiresPermission: true
-    }
-  },
-  {
-    path: "/admin/product/info/edit",
+    path: "/admin/product/info/edit/:slug",
     name: "admin.product.info.edit",
     component: () => import("@/views/admin.view.vue"),
     props: true,
@@ -247,7 +237,7 @@ const routes = [
     }
   },
   {
-    path: "/admin/product/version/add",
+    path: "/admin/product/version/add/:slug",
     name: "admin.product.version.add",
     component: () => import("@/views/admin.view.vue"),
     props: true,
@@ -257,7 +247,7 @@ const routes = [
     }
   },
   {
-    path: "/admin/product/version/edit",
+    path: "/admin/product/version/edit/:slug/:id",
     name: "admin.product.version.edit",
     component: () => import("@/views/admin.view.vue"),
     props: true,
@@ -266,7 +256,7 @@ const routes = [
       requiresPermission: true
     }
   },
-  
+
   {
     path: "/",
     name: "landing",
@@ -322,7 +312,6 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
-
   var token = getCookie("token");
 
   if (to.meta.requiresAuth) {

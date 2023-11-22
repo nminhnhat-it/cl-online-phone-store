@@ -22,8 +22,8 @@ export default {
     },
 
     viewInfo(e) {
-      this.$store.state.slug = $(e.target).attr("slug");
-      this.$router.push({ name: 'admin.product.info' });
+      var slug = $(e.target).attr("slug");
+      this.$router.push({ name: 'admin.product.info', params: { slug: slug } });
     },
   },
   emits: ['delete:item']
@@ -34,32 +34,32 @@ export default {
 <template>
   <hr>
   <div style="overflow-x: scroll;">
-  <table v-if="dataArr[0]" class="data-tb mt-3">
-    <tr class="data-tb-row">
-      <th class="data-tb-col">#</th>
-      <th class="data-tb-col" style="min-width: 102px;">Title</th>
-      <th class="data-tb-col" style="min-width: 102px;">Descriptions</th>
-      <th class="data-tb-col" style="min-width: 102px;">Slug</th>
-      <th class="data-tb-col text-center" style="min-width: 102px;">Price</th>
-      <th class="data-tb-col" style="min-width: 102px;">Date Created</th>
-      <th class="data-tb-col" style="min-width: 102px;">Date Upadted</th>
-      <th class="data-tb-col" style="min-width: 102px;"></th>
-    </tr>
+    <table v-if="dataArr[0]" class="data-tb mt-3">
+      <tr class="data-tb-row">
+        <th class="data-tb-col">#</th>
+        <th class="data-tb-col" style="min-width: 102px;">Title</th>
+        <th class="data-tb-col" style="min-width: 102px;">Descriptions</th>
+        <th class="data-tb-col" style="min-width: 102px;">Slug</th>
+        <th class="data-tb-col text-center" style="min-width: 102px;">Price</th>
+        <th class="data-tb-col" style="min-width: 102px;">Date Created</th>
+        <th class="data-tb-col" style="min-width: 102px;">Date Upadted</th>
+        <th class="data-tb-col" style="min-width: 102px;"></th>
+      </tr>
 
-    <tr v-for="(data, key) in this.dataArr" class="data-tb-row">
-      <td class="data-tb-col">{{ key + 1 }}</td>
-      <td class="data-tb-col">{{ data.pd_title }}</td>
-      <td class="data-tb-col" style="text-overflow: ellipsis; max-width: 200px;">{{ data.pd_desc }}</td>
-      <td class="data-tb-col">{{ data.pd_slug }}</td>
-      <td class="data-tb-col text-center text-danger">${{ data.pd_minPrice }}</td>
-      <td class="data-tb-col">{{ data.createdAt }}</td>
-      <td class="data-tb-col">{{ data.updatedAt }}</td>
-      <td class="data-tb-col modify">
-        <a :slug="data.pd_slug" @click="viewInfo">More Info</a>
-        <a :id="data._id" @click="deleteProduct">Delete</a>
-      </td>
-    </tr>
-  </table>
+      <tr v-for="(data, key) in this.dataArr" class="data-tb-row">
+        <td class="data-tb-col">{{ key + 1 }}</td>
+        <td class="data-tb-col">{{ data.pd_title }}</td>
+        <td class="data-tb-col" style="text-overflow: ellipsis; max-width: 200px;">{{ data.pd_desc }}</td>
+        <td class="data-tb-col">{{ data.pd_slug }}</td>
+        <td class="data-tb-col text-center text-danger">${{ data.pd_minPrice }}</td>
+        <td class="data-tb-col">{{ data.createdAt }}</td>
+        <td class="data-tb-col">{{ data.updatedAt }}</td>
+        <td class="data-tb-col modify">
+          <a :slug="data.pd_slug" @click="viewInfo">More Info</a>
+          <a :id="data._id" @click="deleteProduct">Delete</a>
+        </td>
+      </tr>
+    </table>
   </div>
 </template>
 

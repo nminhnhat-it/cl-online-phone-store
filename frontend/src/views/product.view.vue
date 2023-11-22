@@ -156,5 +156,6 @@ a {
   margin-top: 1rem;
   margin-left: 2rem;
   margin-right: 2rem;
+  border-radius: 5px;
 }
 </style>

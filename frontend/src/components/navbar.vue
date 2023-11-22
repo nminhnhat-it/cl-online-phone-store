@@ -4,6 +4,7 @@ import { defineComponent } from 'vue'
 import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide } from 'vue3-carousel'
 import accountService from "@/services/account.service";
+import productService from "@/services/product.service";
 
 
 export default defineComponent({
@@ -18,6 +19,9 @@ export default defineComponent({
     Slide,
   },
   data: () => ({
+    isDisplaySearchRes: false,
+    filterProducts: [],
+    products: [],
     // carousel settings
     settings: {
       itemsToShow: 20,
@@ -29,6 +33,7 @@ export default defineComponent({
     adminOption: ["Order.News", "Category.Brands", "Product.All"],
   }),
   computed: {
+
     isSignedIn() {
       if (this.$store.state.user)
         return true;
@@ -45,6 +50,16 @@ export default defineComponent({
     }
   },
   methods: {
+
+    showSearchResult(e) {
+      var searchWords = e.target.value
+      this.filterProducts = this.products.filter(product => product.pd_title.toLowerCase().includes(searchWords.toLowerCase()));
+    },
+
+    async retrieveProducts() {
+      var products = await productService.getAll();
+      this.products = products;
+    },
 
     async signOut() {
       await accountService.logout();
@@ -63,15 +78,23 @@ export default defineComponent({
     },
 
     showDeleteSearchBtn(e) {
+      if (e.target.value != "") {
+        this.showSearchResult(e);
+        this.isDisplaySearchRes = true;
+      }
+      else
+        this.isDisplaySearchRes = false;
+
       if (e.target.value != "")
         $(".clear-btn").removeAttr("style");
       else
         $(".clear-btn").attr("style", "display : none !important");
     },
 
-    closeDeleteSearchBtn: function (e) {
+    closeDeleteSearchBtn(e) {
       $(".navbar .search-form .search-input-container").width("230px")
       $(e.target).attr("style", "display : none !important");
+      this.isDisplaySearchRes = false;
     },
 
     showOffcanvas(e) {
@@ -95,6 +118,7 @@ export default defineComponent({
     }
   },
   async mounted() {
+    this.retrieveProducts();
     if (this.route[0] != 'admin' && this.route[0] != 'products')
       window.addEventListener('scroll', this.scrolled);
   },
@@ -106,7 +130,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <nav :class="{ 'opaque': this.route[0] == 'admin' || this.route[0] == 'products' || this.route[0] == 'cart'|| this.route[0] == 'account' }" class="navbar navbar-expand-md fixed-top bg-e8f3ee" style="padding-left: 2rem !important; padding-right: 2rem !important;">
+  <nav :class="{ 'opaque': this.route[0] == 'admin' || this.route[0] == 'products' || this.route[0] == 'cart' || this.route[0] == 'account', 'hide-box-shadow': route[0] == 'admin' }" class="navbar navbar-expand-md fixed-top bg-e8f3ee" style="padding-left: 2rem !important; padding-right: 2rem !important;">
     <div :class="{ 'm-0': this.route[0] == 'admin', 'mx-0': this.route[0] != 'admin' }" class="container-fluid p-0">
       <button class="navbar-toggler me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
         <span v-on:click="showOffcanvas" class="navbar-toggler-icon"></span>
@@ -132,7 +156,7 @@ export default defineComponent({
           <div class="nav-link dropdown-toggle px-0" aria-expanded="true"></div>
           <div class="dropdown-menu">
             <ul class="dropdown-container bg-e8f3ee">
-              <li v-for=" brand in this.brands" class="dropdown-item p-0">
+              <li v-for="  brand  in  this.brands " class="dropdown-item p-0">
                 <router-link :to="{ name: `landing.brands`, params: { slug: `${brand.br_slug}` } }">
                   <a class="nav-link" aria-current="page">{{ brand.br_title }}</a>
                 </router-link>
@@ -159,7 +183,7 @@ export default defineComponent({
                 </div>
                 <ul class="card-body p-0 m-0">
                   <li v-if="this.$store.state.user">
-                    <router-link :to="{name: 'account'}">
+                    <router-link :to="{ name: 'account' }">
                       <a class="dropdown-item nav-link p-2 px-3" href="#">
                         <div class="row">
                           <div class="col-2"><i class="fa-solid fa-user"></i></div>
@@ -256,7 +280,7 @@ export default defineComponent({
       </form>
       <div v-if="this.route[0] == 'admin'" class="sub-nav nav">
         <Carousel v-bind="settings">
-          <Slide v-for="                    option                     in                      adminOption                     " :key="option">
+          <Slide v-for="option in adminOption" :key="option">
             <router-link :to="{ name: `admin.${option.toLowerCase()}` }">
               <div :class="{ active: option.split('.')[0].toLowerCase() == this.route[1] }" class="carousel__item">
                 <a class="nav-link" href="#">{{ option.split('.')[0] }}</a>
@@ -268,7 +292,7 @@ export default defineComponent({
 
       <div v-if="!this.route[0] == 'admin'" class="sub-nav nav">
         <Carousel v-bind="settings">
-          <Slide v-for="                     slide                      in                      3                     " :key="slide">
+          <Slide v-for=" slide  in 3 " :key="slide">
             <div class="carousel__item">
               <a class="nav-link" href="#">{{ slide }}</a>
             </div>
@@ -279,9 +303,60 @@ export default defineComponent({
       <div v-if="isActiveOffcanvas" class="offcanvas-backdrop fade show"></div>
     </div>
   </nav>
+
+  <div class="search-result-ctn" v-if="isDisplaySearchRes">
+    <div class="row search-result-text">Search Results</div>
+    <hr>
+    <div v-if="filterProducts.length == 0" class="">No product found</div>
+    <div v-for=" filterProduct in filterProducts.slice(0, 6) " class="d-flex mb-2" style="background-color: #fff; padding: 1rem;">
+      <div v-if="filterProduct.productVersions" class="search-result-image-ctn">
+        <img :src="this.$store.state.apiUrl + filterProduct.productVersions[0].pv_img" alt="" style=" width: 5rem; height: 5rem;">
+      </div>
+      <div class="col-10">
+        <div class="row mb-2">
+          <router-link :to="{ name: 'products', params: { slug: filterProduct.pd_slug } }">
+            <div class="col result-product-name">{{ filterProduct.pd_title }}</div>
+          </router-link>
+        </div>
+        <div class="row">
+          <div class="col text-danger"><span style="color: #5a5d60 !important;">Price: </span> ${{ filterProduct.pd_minPrice }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
+.search-result-ctn {
+  position: fixed;
+  top: 4rem;
+  z-index: 1000;
+  width: 500px;
+  right: 2rem;
+  background-color: #e8f3ee;
+  box-shadow: #000;
+  border-radius: 5px;
+  border: #5a5d60 solid 1px;
+  padding: 0 1rem 1rem 1rem;
+  border-color: #5fb8db;
+  box-shadow: 0px 2px 20px 10px #00000014 !important;
+}
+
+.search-result-text {
+  color: #5fb8db;
+  font-size: x-large;
+  padding: 1rem 1rem 0 1rem;
+}
+
+.result-product-name {
+  color: #5a5d60;
+  font-size: medium;
+}
+
+.result-product-name:hover {
+  color: #5fb8db;
+}
+
 :focus-visible {
   outline: none !important;
 }
@@ -320,7 +395,6 @@ a {
 
 .navbar {
   transition: all 0.5s linear;
-  box-shadow: #000;
   --bs-bg-opacity: 0 !important;
   box-shadow: none !important;
 }
@@ -328,6 +402,10 @@ a {
 .navbar.opaque {
   --bs-bg-opacity: 1 !important;
   box-shadow: 0px 2px 20px 10px #00000014 !important;
+}
+
+.navbar.hide-box-shadow {
+  box-shadow: none !important;
 }
 
 .navbar .navbar-toggler {
@@ -755,7 +833,6 @@ a {
 
 .navbar.opaque {
   --bs-bg-opacity: 1 !important;
-  box-shadow: none !important;
 }
 
 .navbar .navbar-toggler {

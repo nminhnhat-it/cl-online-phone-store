@@ -21,6 +21,7 @@ export default defineComponent({
       this.addToCart(false);
       if (!this.$store.state.outStock) {
         this.$emit("reload:cart")
+        this.$emit("reload:cart")
         this.$router.push({ name: "cart" });
       }
       this.$store.state.outStock = false;

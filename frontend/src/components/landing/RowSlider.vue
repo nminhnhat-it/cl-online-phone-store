@@ -113,7 +113,7 @@ export default defineComponent({
     <div v-for="serie in this.series" class="row-slider mb-2 pt-2">
       <h2 class="title m-0 mb-2">{{ serie.sr_title }}</h2>
       <Carousel @vue:updated="calcCartSize" ref="product__slider" v-bind="settings" :breakpoints="breakpoints">
-        <Slide v-for="(product, key) in getProductsOfSerie(serie)" :key="key">
+        <Slide v-for="(product, key) in getProductsOfSerie(serie).filter(product => product.productVersions.length != 0 && product.productImages.length)" :key="key">
           <div class="carousel__item">
             <router-link :to="{ name: 'products', params: { slug: product.pd_slug } }">
               <div v-bind:slug="product.pd_slug" class="card" target='_blank'>

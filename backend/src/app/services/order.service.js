@@ -58,7 +58,7 @@ class OrderService {
     for (var order of orders) {
       var cart = await cartModel.findById(order.c_id);
       var customer = await customerModel.findById(cart.ctm_id);
-      var staff = await staffModel.findById(order.s_id)
+      var staff = await staffModel.findById(order.s_id);
       order = {
         ...order._doc,
         customer: customer,

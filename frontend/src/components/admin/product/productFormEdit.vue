@@ -6,7 +6,7 @@ import productService from "@/services/product.service";
 export default {
   props: {
     route: { type: Array, default: [] },
-    productInfo: { type: Object, default: {} }
+    slug: { type: String },
   },
   data() {
     const FormSchema = yup.object().shape({
@@ -31,6 +31,7 @@ export default {
         .max(255, "Chipset info maximum 255 characters."),
     });
     return {
+      productInfo: {},
       FormSchema,
       data: {},
       screenSizes: [5.4, 6.1, 6.7],
@@ -75,26 +76,27 @@ export default {
       this.$emit("update:item");
     },
 
-    setInfos() {
-      if (this.productInfo.productInfo) {
-        this.data._id = this.productInfo._id;
-        this.data.pd_title = this.productInfo.pd_title;
-        this.data.pd_desc = this.productInfo.pd_desc;
+    async setInfos() {
+      var slug = this.slug;
+      this.productInfo = await productService.get(slug);
 
-        this.data.sr_id = this.productInfo.sr_id;
-        this.data.pi_screen = this.productInfo.productInfo.pi_screen;
-        this.data.pi_camera = this.productInfo.productInfo.pi_camera;
-        this.data.pi_ram = this.productInfo.productInfo.pi_ram;
-        this.data.pi_mem = this.productInfo.productInfo.pi_mem;
-        this.data.pi_battery = this.productInfo.productInfo.pi_battery;
-        this.data.pi_chipset = this.productInfo.productInfo.pi_chipset;
+      this.data._id = this.productInfo._id;
+      this.data.pd_title = this.productInfo.pd_title;
+      this.data.pd_desc = this.productInfo.pd_desc;
 
-        Object.keys(this.data).forEach(key => {
-          if (this.data[key] == null) {
-            this.data[key] = "";
-          }
-        });
-      }
+      this.data.sr_id = this.productInfo.sr_id;
+      this.data.pi_screen = this.productInfo.productInfo.pi_screen;
+      this.data.pi_camera = this.productInfo.productInfo.pi_camera;
+      this.data.pi_ram = this.productInfo.productInfo.pi_ram;
+      this.data.pi_mem = this.productInfo.productInfo.pi_mem;
+      this.data.pi_battery = this.productInfo.productInfo.pi_battery;
+      this.data.pi_chipset = this.productInfo.productInfo.pi_chipset;
+
+      Object.keys(this.data).forEach(key => {
+        if (this.data[key] == null) {
+          this.data[key] = "";
+        }
+      });
     }
   },
   mounted() {

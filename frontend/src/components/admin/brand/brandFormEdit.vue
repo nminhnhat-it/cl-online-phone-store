@@ -24,7 +24,8 @@ export default {
     });
     return {
       FormSchema,
-      data: {}
+      data: {},
+      imageUrl: null
     }
   },
   methods: {
@@ -41,6 +42,7 @@ export default {
 
     getImages(e) {
       this.$store.state.images = e.target.files;
+      this.imageUrl = URL.createObjectURL(e.target.files[0]);
     },
   },
   mounted() {
@@ -63,12 +65,15 @@ export default {
         <Field v-model="this.data.br_desc" name="br_desc" type="text" class="form-control form-control-secondary" id="br_desc" />
         <ErrorMessage name="br_desc" class="form-error-span" />
       </div>
+      <div class="position-relative">
+        <label for="" class="form-label">Image</label>
+      </div>
       <div class="position-relative mb-3">
-        <label for="brandImage" class="form-label">Image</label>
-        <p v-if="!$store.state.images"> {{ data.br_img }}</p>
-        <p v-if="$store.state.images" v-for="image in $store.state.images">{{ image.name }}</p>
-        <Field @change="getImages" tabindex="-1" multiple name="brandImage" type="file" class="form-control form-control-secondary" id="brandImage" accept="image/*" />
+        <img class="me-3" v-if="!$store.state.images && data.br_img" :src="this.$store.state.apiUrl + data.br_img" alt="" style="width: 6rem; height: 6rem; object-fit: contain;   border: 1px solid #5a5d60; padding: 1rem;">
+        <img class="me-3" v-if="$store.state.images" :src="this.imageUrl" alt="" style="width: 6rem; height: 6rem; object-fit: contain;   border: 1px solid #5a5d60; padding: 1rem;">
+        <Field @change="getImages" tabindex="-1" multiple name="brandImage" type="file" class="form-control form-control-secondary" id="brandImage" accept="image/*" style="display:  none;" />
         <ErrorMessage name="brandImage" class="form-error-span" />
+        <label for="brandImage" class="form-label change-image-btn">Change</label>
       </div>
       <button type="submit" class="btn btn-6bc3e7">Submit</button>
       <router-link :to="{ name: 'admin.category.brands' }">
@@ -79,6 +84,11 @@ export default {
 </template>
 
 <style scoped>
+.change-image-btn:hover {
+  color: #5fb8db;
+  cursor: pointer;
+}
+
 .form-error-span {
   color: red;
   font-size: 12px !important;
