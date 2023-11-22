@@ -51,8 +51,8 @@ export default {
         pv_price: "",
         pv_quantity: 1,
       }
-      this.images = null,
-        this.imageUrl = "link";
+      this.images = null;
+      this.imageUrl = null;
       this.$emit("add:item");
     },
 
@@ -99,6 +99,7 @@ export default {
           <div class="position-relative mb-3">
             <img class="me-3" v-if="!this.images && data.pv_img" :src="this.$store.state.apiUrl + data.pv_img" alt="" style="width: 6rem; height: 6rem; object-fit: contain;   border: 1px solid #5a5d60; padding: 1rem;">
             <img class="me-3" v-if="this.images" :src="this.imageUrl" alt="" style="width: 6rem; height: 6rem; object-fit: contain;   border: 1px solid #5a5d60; padding: 1rem;">
+            <img class="me-3" v-if="!this.images" alt="" style="width: 6rem; height: 6rem; object-fit: contain;   border: 1px solid #5a5d60; padding: 1rem;">
             <Field @change="getImages" tabindex="-1" multiple name="productVerionImage" type="file" class="form-control form-control-secondary" id="productVerionImage" accept="image/*" style="display:  none;" />
             <ErrorMessage name="productVerionImage" class="form-error-span" />
             <label for="productVerionImage" class="form-label change-image-btn">Change</label>

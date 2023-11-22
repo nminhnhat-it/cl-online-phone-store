@@ -73,6 +73,7 @@ export default {
       currentVers: 1,
       imageUrl: null,
       colorImageUrl: null,
+      URL: URL
     }
   },
   components: {
@@ -98,16 +99,12 @@ export default {
 
     getImages(e) {
       this.images = e.target.files;
-      this.imageUrl = URL.createObjectURL(e.target.files[0]);
     },
 
     getColorImg(e) {
       this.colorImg = e.target.files;
       this.colorImageUrl = URL.createObjectURL(e.target.files[0]);
     }
-  },
-  mounted() {
-    this.$store.state.images = "link";
   },
   emits: ["add:item"]
 }
@@ -140,7 +137,8 @@ export default {
         <label for="" class="form-label">Images</label>
       </div>
       <div class="position-relative mb-3">
-        <img class="me-3" v-if="this.images" :src="this.imageUrl" alt="" style="width: 6rem; height: 6rem; object-fit: contain;   border: 1px solid #5a5d60; padding: 1rem;">
+        <img v-for="image in this.images" class="me-3" v-if="this.images.length != 0" :src="URL.createObjectURL(image)" alt="" style="width: 6rem; height: 6rem; object-fit: contain;   border: 1px solid #5a5d60; padding: 1rem;">
+        <img class="me-3" v-if="this.images.length == 0" alt="" style="width: 6rem; height: 6rem; object-fit: contain;   border: 1px solid #5a5d60; padding: 1rem;">
         <Field @change="getImages" tabindex="-1" multiple name="productImages" type="file" class="form-control form-control-secondary" id="productImages" accept="image/*" style="display:  none;" />
         <ErrorMessage name="productImages" class="form-error-span" />
         <label for="productImages" class="form-label change-image-btn">Change</label>

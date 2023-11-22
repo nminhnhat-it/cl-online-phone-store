@@ -49,7 +49,7 @@ export default defineComponent({
         version = this.defaultSelectVersion;
       else
         version = this.seletedVersion
-      
+
       var data = {
         pv_id: version._id,
         ci_quantity: this.quantity
@@ -129,7 +129,7 @@ export default defineComponent({
               <img :src="$store.state.apiUrl + version.pv_img" class="d-block box-item-image" alt="...">
             </div>
             <div class="col-9">
-              <div class="color-title px-2"><span>{{ version.pv_title }}</span></div>
+              <div class="color-title px-2" style="text-overflow: ellipsis; overflow: hidden; -webkit-line-clamp: 1;"><span>{{ version.pv_title }}</span></div>
               <div class="color-price px-2"><span>${{ version.pv_price.toLocaleString() }}</span></div>
             </div>
           </div>

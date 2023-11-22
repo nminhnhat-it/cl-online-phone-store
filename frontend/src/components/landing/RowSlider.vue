@@ -110,7 +110,7 @@ export default defineComponent({
 
 <template>
   <div class="row-sliders-container m-0">
-    <div v-for="serie in this.series" class="row-slider mb-2 pt-2">
+    <div v-for="serie in this.series.filter(serie => getProductsOfSerie(serie).length !=0)" class="row-slider mb-2 pt-2">
       <h2 class="title m-0 mb-2">{{ serie.sr_title }}</h2>
       <Carousel @vue:updated="calcCartSize" ref="product__slider" v-bind="settings" :breakpoints="breakpoints">
         <Slide v-for="(product, key) in getProductsOfSerie(serie).filter(product => product.productVersions.length != 0 && product.productImages.length)" :key="key">
@@ -135,7 +135,7 @@ export default defineComponent({
 
   <router-link v-if="isActive" :to="{ name: 'products', params: { slug: this.popupProduct.pd_slug } }">
     <a @mouseleave="unActiveProductPopup" class="product-info-popup card" href="#" target="_blank" :style="styleObj">
-      <img :src="$store.state.apiUrl + popupProduct.productImages[0].im_path" class=" card-img-top" alt="...">
+      <img :src="$store.state.apiUrl + popupProduct.productImages[0].im_path" class=" card-img-top" alt="..." style="width: 100%; height: 8rem; object-fit: cover; border-radius:0;">
       <div class='info-container card-body'>
         <div class='info-name text-start mb-1'>{{ popupProduct.pd_title }}</div>
         <div class='d-flex info-popup-product mb-2'>
