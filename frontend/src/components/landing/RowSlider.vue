@@ -143,7 +143,7 @@ export default defineComponent({
           <div class='info-item-popup me-1 px-1'>{{ popupProduct.productInfo.pi_ram }} GB</div>
           <div class='info-item-popup me-1 px-1'>{{ popupProduct.productInfo.pi_mem }} GB</div>
         </div>
-        <div class='d-flex text-black mb-1'><span class="me-1">Prices:</span> <span class="text-danger">${{ popupProduct.pd_minPrice }}</span></div>
+        <div class='d-flex text-black mb-1'><span class="me-1">Prices:</span> <span class="text-danger">${{ popupProduct.pd_minPrice.toLocaleString() }}</span></div>
         <div class='info-item-description text-black'>{{ popupProduct.pd_desc }}.</div>
       </div>
     </a>

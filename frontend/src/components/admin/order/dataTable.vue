@@ -57,7 +57,7 @@ export default {
         <td class="data-tb-col">{{ data.od_email }}</td>
         <td class="data-tb-col">0{{ data.od_phone }}</td>
         <td class="data-tb-col" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ data.od_address }}</td>
-        <td class="data-tb-col text-center text-danger">${{ data.od_total }}</td>
+        <td class="data-tb-col text-center text-danger">${{ data.od_total.toLocaleString() }}</td>
         <td v-if="data.staff != null" class="data-tb-col">{{ data.staff.name }}</td>
         <td v-if="data.staff == null" class="data-tb-col">{{ }}</td>
         <td class="data-tb-col">{{ data.createdAt }}</td>

@@ -187,7 +187,7 @@ export default {
 
       <tr v-for="productVersion in data.productVersions" class="data-tb-row">
         <td class="data-tb-col">{{ productVersion.pv_title }}</td>
-        <td class="data-tb-col text-danger">${{ productVersion.pv_price }}</td>
+        <td class="data-tb-col text-danger">${{ productVersion.pv_price.toLocaleString() }}</td>
         <td class="data-tb-col">{{ productVersion.pv_quantity }}</td>
         <td class="data-tb-col">
           <img :src="this.$store.state.apiUrl + productVersion.pv_img" alt="" style=" width: 5rem; height: 5rem; object-fit: contain;">

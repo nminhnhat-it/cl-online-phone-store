@@ -89,7 +89,7 @@ export default {
               <div class="focus-category-item me-2 mb-1 px-2 ">{{ product.productInfo.pi_ram }}GB</div>
               <div class="focus-category-item me-2 mb-1 px-2 ">{{ product.productInfo.pi_mem }}GB</div>
             </div>
-            <div class="focus-item-desc text-black">Prices <span class="text-danger">${{ product.pd_minPrice }}</span></div>
+            <div class="focus-item-desc text-black">Prices <span class="text-danger">${{ product.pd_minPrice.toLocaleString() }}</span></div>
             <div class="focus-item-desc text-black">{{ product.pd_desc }}.</div>
           </div>
         </a>

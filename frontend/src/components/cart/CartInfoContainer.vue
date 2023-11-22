@@ -103,7 +103,7 @@ export default {
         <span>Payment required ({{ this.$store.state.cartQuantity }} products)</span>
       </div>
       <div style="margin-left: auto;">
-        <span class="text-danger">${{ cart.c_total }}</span>
+        <span class="text-danger">${{ cart.c_total.toLocaleString() }}</span>
       </div>
     </div>
     <div class="customer-info">
@@ -157,7 +157,7 @@ export default {
               </div>
             </div>
             <div class="total-product-price text-end">
-              <span style="color: red;">${{ cartInfo.productVersion.pv_price * cartInfo.ci_quantity }}</span>
+              <span style="color: red;">${{ (cartInfo.productVersion.pv_price * cartInfo.ci_quantity).toLocaleString() }}</span>
             </div>
           </div>
         </div>

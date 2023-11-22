@@ -51,7 +51,7 @@ export default {
         <td class="data-tb-col">{{ data.pd_title }}</td>
         <td class="data-tb-col" style="text-overflow: ellipsis; max-width: 200px;">{{ data.pd_desc }}</td>
         <td class="data-tb-col">{{ data.pd_slug }}</td>
-        <td class="data-tb-col text-center text-danger">${{ data.pd_minPrice }}</td>
+        <td class="data-tb-col text-center text-danger">${{ data.pd_minPrice.toLocaleString() }}</td>
         <td class="data-tb-col">{{ data.createdAt }}</td>
         <td class="data-tb-col">{{ data.updatedAt }}</td>
         <td class="data-tb-col modify">

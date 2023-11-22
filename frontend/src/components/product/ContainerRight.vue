@@ -130,7 +130,7 @@ export default defineComponent({
             </div>
             <div class="col-9">
               <div class="color-title px-2"><span>{{ version.pv_title }}</span></div>
-              <div class="color-price px-2"><span>${{ version.pv_price }}</span></div>
+              <div class="color-price px-2"><span>${{ version.pv_price.toLocaleString() }}</span></div>
             </div>
           </div>
         </div>
@@ -148,10 +148,10 @@ export default defineComponent({
           </select>
         </div>
         <div v-if="this.defaultSelectVersion && !this.seletedVersion.pv_quantity && this.defaultSelectVersion.pv_quantity" class="total mb-3">
-          <span>${{ this.defaultSelectVersion.pv_price * quantity }}</span>
+          <span>${{ (this.defaultSelectVersion.pv_price * quantity).toLocaleString() }}</span>
         </div>
         <div v-if="this.seletedVersion && this.seletedVersion.pv_quantity" class="total mb-3">
-          <span>${{ this.seletedVersion.pv_price * quantity }}</span>
+          <span>${{ (this.seletedVersion.pv_price * quantity).toLocaleString() }}</span>
         </div>
         <div class="row">
           <div class="col">
