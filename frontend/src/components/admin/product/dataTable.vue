@@ -4,6 +4,11 @@ export default {
   props: {
     dataArr: { type: Array, default: [] },
   },
+  data() {
+    return {
+      filterProduct: [],
+    }
+  },
   methods: {
 
     editProduct(e) {
@@ -25,13 +30,27 @@ export default {
       var slug = $(e.target).attr("slug");
       this.$router.push({ name: 'admin.product.info', params: { slug: slug } });
     },
-  },
-  emits: ['delete:item']
 
+    search(e) {
+      var searchWords = e.target.value;
+      this.filterProduct = this.dataArr.filter(product => product.pd_title.toLowerCase().includes(searchWords.toLowerCase()))
+    }
+  },
+  emits: ['delete:item'],
 }
 </script>
 
 <template>
+  <hr>
+  <div class="search">
+    <div class="row">
+      <div class="col">
+        <div class="position-relative mb">
+          <input @input="search" class="form-control me-2" type="search" placeholder="Search Products" aria-label="Search">
+        </div>
+      </div>
+    </div>
+  </div>
   <hr>
   <div style="overflow-x: scroll;">
     <table v-if="dataArr[0]" class="data-tb mt-3">
@@ -46,7 +65,7 @@ export default {
         <th class="data-tb-col" style="min-width: 102px;"></th>
       </tr>
 
-      <tr v-for="(data, key) in this.dataArr" class="data-tb-row">
+      <tr v-for="(data, key) in this.filterProduct.length == 0 ? this.dataArr : this.filterProduct" class="data-tb-row">
         <td class="data-tb-col">{{ key + 1 }}</td>
         <td class="data-tb-col">{{ data.pd_title }}</td>
         <td class="data-tb-col" style="text-overflow: ellipsis; max-width: 200px;">{{ data.pd_desc }}</td>

@@ -147,7 +147,6 @@ export default defineComponent({
           </router-link>
         </div>
         <div class="nav-item">
-
           <router-link :to="{ name: `landing.brands`, params: { slug: `${this.brands[1].br_slug}` } }">
             <a class="nav-link px-0 pe-3">{{ this.brands[1].br_title }}</a>
           </router-link>
@@ -308,7 +307,7 @@ export default defineComponent({
     <div class="row search-result-text">Search Results</div>
     <hr>
     <div v-if="filterProducts.length == 0" class="">No product found</div>
-    <div v-for=" filterProduct in filterProducts.slice(0, 6) " class="d-flex mb-2" style="background-color: #fff; padding: 1rem;">
+    <div v-for=" filterProduct in filterProducts.slice(0, 5) " class="d-flex mb-2" style="background-color: #fff; padding: 1rem;">
       <div v-if="filterProduct.productVersions" class="search-result-image-ctn">
         <img :src="this.$store.state.apiUrl + filterProduct.productVersions[0].pv_img" alt="" style=" width: 5rem; height: 5rem;">
       </div>

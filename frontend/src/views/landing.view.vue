@@ -77,6 +77,7 @@ export default {
 
     async retrieveBrands() {
       this.brands = await brandService.getAll();
+      this.brands_loaded = true
     },
 
     async retrieveSeries() {
@@ -96,7 +97,7 @@ export default {
     this.retrieveUser();
     this.retrieveBrands();
     this.retrieveSeries();
-    this.retrieveProducts();
+    this.retrieveProducts();    
   }
 }
 </script>
